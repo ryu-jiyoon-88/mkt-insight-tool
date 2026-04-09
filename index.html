@@ -12,8 +12,8 @@
         body { font-family: 'Pretendard', sans-serif; letter-spacing: -0.02em; }
         .tool-card { @apply bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100 transition-all hover:shadow-md; }
         .calc-input { @apply w-full p-4 bg-slate-50 rounded-2xl outline-none border border-slate-100 font-bold text-sm focus:ring-2 focus:ring-indigo-500; }
-        /* 컬러 톤 선택기 스타일 */
-        .color-selector { @apply w-10 h-10 rounded-full cursor-pointer border-4 border-white shadow-sm hover:scale-125 transition-all; }
+        /* 컬러 칩 스타일: 확실하게 보이도록 강제 설정 */
+        .color-selector { @apply w-10 h-10 rounded-full cursor-pointer border-4 border-white shadow-md hover:scale-125 transition-all block; }
         .color-selector.active { @apply ring-4 ring-slate-800 scale-110; }
     </style>
 </head>
@@ -22,68 +22,67 @@
         
         <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-10">
             <div>
-                <h1 class="text-5xl font-black text-slate-800 tracking-tighter italic">✨ WORK LESS, EARN MORE</h1>
-                <p class="text-indigo-600 mt-3 font-bold text-xl">4가지 톤 선택 및 매체별 정밀 검색 모드</p>
+                <h1 class="text-5xl font-black text-slate-800 tracking-tighter italic uppercase">Work Less, Earn More</h1>
+                <p class="text-indigo-600 mt-3 font-bold text-xl">4가지 톤 선택 & 전 매체 다이렉트 트렌드 체크</p>
             </div>
-            <div id="clock" class="text-2xl font-mono font-bold text-slate-300">00:00:00</div>
         </header>
 
         <div class="space-y-8">
             <div class="tool-card">
-                <h2 class="text-2xl font-black text-slate-800 mb-8 flex items-center gap-2">🔍 실시간 트렌드 체크</h2>
+                <h2 class="text-2xl font-black text-slate-800 mb-8">🔍 실시간 트렌드 체크</h2>
                 <div class="flex flex-col md:flex-row gap-4">
-                    <input id="search-brand" type="text" placeholder="분석할 키워드를 입력하세요" class="flex-1 p-6 bg-slate-50 rounded-[1.5rem] outline-none focus:ring-2 focus:ring-indigo-500 font-bold border border-slate-100 text-xl">
+                    <input id="search-brand" type="text" placeholder="분석할 키워드 입력" class="flex-1 p-6 bg-slate-50 rounded-[1.5rem] outline-none focus:ring-2 focus:ring-indigo-500 font-bold border border-slate-100 text-xl">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <button onclick="monitor('blackkiwi')" class="px-8 py-5 rounded-[1.5rem] bg-orange-50 text-orange-600 font-black transition hover:bg-orange-100 shadow-sm border border-orange-100">🥝 블랙키위</button>
-                        <button onclick="monitor('blog')" class="px-8 py-5 rounded-[1.5rem] bg-green-50 text-green-700 font-bold transition hover:bg-green-100 shadow-sm border border-green-100">🟢 블로그</button>
-                        <button onclick="monitor('cafe')" class="px-8 py-5 rounded-[1.5rem] bg-emerald-50 text-emerald-700 font-bold transition hover:bg-emerald-100 shadow-sm border border-emerald-100">☕ 카페</button>
-                        <button onclick="monitor('insta')" class="px-8 py-5 rounded-[1.5rem] bg-pink-50 text-pink-600 font-bold transition hover:bg-pink-100 shadow-sm border border-pink-100">📸 인스타</button>
+                        <button onclick="monitor('blackkiwi')" class="px-8 py-5 rounded-[1.5rem] bg-orange-50 text-orange-600 font-black">🥝 블랙키위</button>
+                        <button onclick="monitor('blog')" class="px-8 py-5 rounded-[1.5rem] bg-green-50 text-green-700 font-bold">🟢 블로그</button>
+                        <button onclick="monitor('cafe')" class="px-8 py-5 rounded-[1.5rem] bg-emerald-50 text-emerald-700 font-bold">☕ 카페</button>
+                        <button onclick="monitor('insta')" class="px-8 py-5 rounded-[1.5rem] bg-pink-50 text-pink-600 font-bold">📸 인스타</button>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="tool-card border-2 border-indigo-50">
-                    <h3 class="text-xl font-bold text-slate-800 mb-6 italic">🎯 ROAS 계산기</h3>
+                <div class="tool-card border-2 border-indigo-50 text-center">
+                    <h3 class="text-xl font-bold mb-6 italic">🎯 ROAS 계산기</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
                         <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="매출액" class="calc-input">
                     </div>
-                    <div id="res-roas" class="mt-8 text-center text-5xl font-black text-slate-200 font-mono">0%</div>
+                    <div id="res-roas" class="mt-8 text-5xl font-black text-slate-200 font-mono">0%</div>
                 </div>
-                <div class="tool-card border-2 border-emerald-50">
-                    <h3 class="text-xl font-bold text-slate-800 mb-6 italic">🎯 목표 매출 계산기</h3>
+                <div class="tool-card border-2 border-emerald-50 text-right">
+                    <h3 class="text-xl font-bold mb-6 italic">🎯 목표 매출 계산기</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
                         <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="목표 ROAS(%)" class="calc-input">
                     </div>
-                    <div id="res-target-rev" class="mt-8 text-right text-3xl font-black text-emerald-600 font-mono">0원</div>
+                    <div id="res-target-rev" class="mt-8 text-3xl font-black text-emerald-600 font-mono">0원</div>
                 </div>
             </div>
 
             <div class="tool-card border-4 border-slate-100">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12">
                     <div>
                         <h2 class="text-3xl font-black text-slate-800">📊 성과 시각화 리포트</h2>
-                        <p class="text-slate-400 font-medium mt-1">첫 번째 열 항목을 기준으로 그래프를 생성합니다.</p>
+                        <p class="text-slate-400 font-medium mt-1 italic">엑셀 데이터를 올리면 총비용, 매출, ROAS가 한 번에 출력됩니다.</p>
                     </div>
                     
-                    <div class="flex items-center gap-6 bg-white px-6 py-4 rounded-[2.5rem] border border-slate-100 shadow-sm">
-                        <div class="flex gap-4">
-                            <div onclick="setChartColor('#4f46e5')" class="color-selector bg-indigo-500 active" id="sel-indigo" title="신뢰의 인디고"></div>
-                            <div onclick="setChartColor('#e11d48')" class="color-selector bg-rose-500" id="sel-rose" title="강렬한 로즈"></div>
-                            <div onclick="setChartColor('#10b981')" class="color-selector bg-emerald-500" id="sel-emerald" title="안정의 에메랄드"></div>
-                            <div onclick="setChartColor('#f59e0b')" class="color-selector bg-amber-500" id="sel-amber" title="활기찬 앰버"></div>
+                    <div class="flex items-center gap-6 bg-slate-100 p-3 px-6 rounded-[2.5rem] shadow-inner">
+                        <div class="flex gap-4" id="color-chips">
+                            <div onclick="setChartColor('#4f46e5')" class="color-selector bg-indigo-500 active" id="sel-indigo"></div>
+                            <div onclick="setChartColor('#e11d48')" class="color-selector bg-rose-500" id="sel-rose"></div>
+                            <div onclick="setChartColor('#10b981')" class="color-selector bg-emerald-500" id="sel-emerald"></div>
+                            <div onclick="setChartColor('#f59e0b')" class="color-selector bg-amber-500" id="sel-amber"></div>
                         </div>
-                        <div class="w-px h-8 bg-slate-200"></div>
-                        <button onclick="downloadChart()" class="bg-slate-800 text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-black transition-all">PNG 저장</button>
+                        <div class="w-px h-8 bg-slate-300"></div>
+                        <button onclick="downloadChart()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl text-sm font-black hover:bg-black transition-all shadow-lg">PNG 저장</button>
                     </div>
                 </div>
 
-                <div id="drop-zone" class="w-full h-80 border-4 border-dashed border-slate-100 rounded-[4rem] flex flex-col items-center justify-center text-slate-300 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all cursor-pointer group">
-                    <div class="text-center">
-                        <div class="text-6xl mb-4 group-hover:scale-110 transition-transform">📈</div>
-                        <span class="text-2xl font-black text-slate-500">엑셀 파일을 여기에 드롭하세요</span>
+                <div id="drop-zone" class="w-full h-80 border-4 border-dashed border-slate-200 rounded-[4rem] flex flex-col items-center justify-center text-slate-300 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all cursor-pointer">
+                    <div class="text-center pointer-events-none">
+                        <div class="text-7xl mb-4">📂</div>
+                        <span class="text-2xl font-black text-slate-500">엑셀 파일을 드롭하여 리포트 생성</span>
                     </div>
                     <input type="file" id="file-input" multiple class="hidden">
                 </div>
@@ -100,9 +99,7 @@
         let rawDataStore = [];
         let myChart = null;
 
-        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-
-        // [컬러 톤 선택 시스템]
+        // 컬러 톤 변경 로직
         function setChartColor(hex) {
             activeColor = hex;
             document.querySelectorAll('.color-selector').forEach(el => el.classList.remove('active'));
@@ -142,17 +139,17 @@
         function processData() {
             if (rawDataStore.length === 0) return;
             const dict = {
-                rev: ['매출', '수입', 'Revenue', 'Sales', '전환금액', '구매금액'],
-                spend: ['광고비', '지출', 'Cost', 'Spend', '비용', '총비용']
+                rev: ['매출', '수입', 'Revenue', 'Sales', '전환금액', '구매금액', '합계매출'],
+                spend: ['광고비', '지출', 'Cost', 'Spend', '비용', '총비용', '소진비용']
             };
 
             let headerIdx = -1;
-            for(let i=0; i<Math.min(rawDataStore.length, 10); i++) {
+            for(let i=0; i<Math.min(rawDataStore.length, 15); i++) {
                 if (rawDataStore[i].some(cell => [...dict.rev, ...dict.spend].some(k => String(cell).includes(k)))) {
                     headerIdx = i; break;
                 }
             }
-            if(headerIdx === -1) return alert("데이터 항목을 찾을 수 없습니다.");
+            if(headerIdx === -1) return alert("매출 혹은 비용 항목을 찾지 못했습니다.");
 
             const headerRow = rawDataStore[headerIdx];
             const idx = {
@@ -191,8 +188,8 @@
                     labels: labels,
                     datasets: [
                         { label: 'ROAS (%)', type: 'line', data: roas, borderColor: activeColor, backgroundColor: activeColor, borderWidth: 6, pointRadius: 7, pointBackgroundColor: '#fff', yAxisID: 'y1', zIndex: 10 },
-                        { label: 'Spend', type: 'line', data: spends, borderColor: 'rgba(148, 163, 184, 0.4)', borderDash: [8, 4], borderWidth: 2, pointRadius: 0, yAxisID: 'y', zIndex: 5 },
-                        { label: 'Revenue', type: 'bar', data: revs, backgroundColor: activeColor + '1A', borderRadius: 15, yAxisID: 'y', zIndex: 1 }
+                        { label: '총비용 (Spend)', type: 'line', data: spends, borderColor: 'rgba(100, 116, 139, 0.5)', borderDash: [6, 4], borderWidth: 3, pointRadius: 0, yAxisID: 'y', zIndex: 5 },
+                        { label: '매출액 (Revenue)', type: 'bar', data: revs, backgroundColor: activeColor + '20', borderRadius: 12, yAxisID: 'y', zIndex: 1 }
                     ]
                 },
                 options: {
