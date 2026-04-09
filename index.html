@@ -3,108 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Better Life Project</title>
+    <title>Marketing Performance Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
         body { font-family: 'Pretendard', sans-serif; letter-spacing: -0.02em; }
-        .tool-card { @apply bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 transition-all hover:shadow-md; }
-        .tab-btn { @apply px-8 py-4 font-bold text-slate-400 border-b-4 border-transparent transition-all; }
-        .tab-btn.active { @apply text-indigo-600 border-indigo-600; }
+        .tool-card { @apply bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100 transition-all hover:shadow-md; }
         .calc-input { @apply w-full p-4 bg-slate-50 rounded-2xl outline-none border border-slate-100 font-bold text-sm focus:ring-2 focus:ring-indigo-500; }
-        .color-selector { @apply w-6 h-6 rounded-full cursor-pointer border-2 border-white shadow-sm hover:scale-110 transition-transform; }
-        .color-selector.active { @apply ring-2 ring-slate-800; }
+        .color-selector { @apply w-8 h-8 rounded-full cursor-pointer border-4 border-white shadow-sm hover:scale-125 transition-all; }
+        .color-selector.active { @apply ring-2 ring-slate-800 scale-110; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-900">
-    <div class="max-w-7xl mx-auto p-6 md:p-10">
-        <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-8">
+<body class="bg-slate-50 min-h-screen text-slate-900 pb-20">
+    <div class="max-w-6xl mx-auto p-6 md:p-10">
+        
+        <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-10">
             <div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tight italic">✨ 적게 일하고 많이 벌자!</h1>
-                <p class="text-slate-500 mt-2 font-bold text-lg text-indigo-600">효율 중심의 마케팅 업무 자동화 프로젝트</p>
+                <h1 class="text-5xl font-black text-slate-800 tracking-tighter italic">✨ WORK LESS, EARN MORE</h1>
+                <p class="text-indigo-600 mt-3 font-bold text-xl">4가지 톤 선택형 성과 시각화 모드</p>
             </div>
-            <div id="clock" class="text-xl font-mono font-bold text-slate-300">00:00:00</div>
+            <div id="clock" class="text-2xl font-mono font-bold text-slate-300">00:00:00</div>
         </header>
 
-        <div class="flex gap-4 mb-8 border-b">
-            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active">📈 통합 대시보드</button>
-            <button onclick="switchTab('manager')" id="tab-manager" class="tab-btn">📁 데이터 매니저</button>
-        </div>
-
-        <div id="content-dashboard" class="space-y-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="tool-card border-2 border-indigo-50">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6 italic text-center">🎯 ROAS 계산기</h2>
-                    <div class="p-5 bg-slate-50 rounded-[2rem] border border-slate-100">
-                        <div class="grid grid-cols-2 gap-4 mt-2">
-                            <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
-                            <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="매출액" class="calc-input">
-                        </div>
-                        <div id="res-roas" class="mt-6 text-center text-4xl font-black text-slate-300 font-mono">0%</div>
+        <div class="space-y-8">
+            <div class="tool-card">
+                <h2 class="text-2xl font-black text-slate-800 mb-8 flex items-center gap-2">🔍 실시간 트렌드 체크</h2>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input id="search-brand" type="text" placeholder="분석할 키워드를 입력하세요" class="flex-1 p-6 bg-slate-50 rounded-[1.5rem] outline-none focus:ring-2 focus:ring-indigo-500 font-bold border border-slate-100 text-xl">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <button onclick="monitor('blackkiwi')" class="px-8 py-5 rounded-[1.5rem] bg-orange-50 text-orange-600 font-black transition hover:bg-orange-100 shadow-sm">🥝 블랙키위</button>
+                        <button onclick="monitor('blog')" class="px-8 py-5 rounded-[1.5rem] bg-green-50 text-green-700 font-bold transition hover:bg-green-100 shadow-sm">🟢 블로그</button>
+                        <button onclick="monitor('cafe')" class="px-8 py-5 rounded-[1.5rem] bg-emerald-50 text-emerald-700 font-bold transition hover:bg-emerald-100 shadow-sm">☕ 카페</button>
+                        <button onclick="monitor('insta')" class="px-8 py-5 rounded-[1.5rem] bg-pink-50 text-pink-600 font-bold transition hover:bg-pink-100 shadow-sm">📸 인스타</button>
                     </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="tool-card border-2 border-indigo-50">
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 italic">🎯 ROAS 계산기</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
+                        <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="매출액" class="calc-input">
+                    </div>
+                    <div id="res-roas" class="mt-8 text-center text-5xl font-black text-slate-200 font-mono">0%</div>
                 </div>
                 <div class="tool-card border-2 border-emerald-50">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6 italic text-center">🎯 목표 매출 계산기</h2>
-                    <div class="p-5 bg-emerald-50/30 rounded-[2rem] border border-emerald-100">
-                        <div class="grid grid-cols-2 gap-4 mt-2">
-                            <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
-                            <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="목표 ROAS(%)" class="calc-input">
-                        </div>
-                        <div id="res-target-rev" class="mt-6 text-right text-2xl font-black text-emerald-600 font-mono">0원</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-6 italic">🎯 목표 매출 계산기</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
+                        <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="목표 ROAS(%)" class="calc-input">
                     </div>
+                    <div id="res-target-rev" class="mt-8 text-right text-3xl font-black text-emerald-600 font-mono">0원</div>
                 </div>
             </div>
 
-            <div class="tool-card">
-                <h2 class="text-xl font-bold text-slate-800 mb-6">🔍 실시간 트렌드 체크</h2>
-                <div class="flex flex-col md:flex-row gap-4">
-                    <input id="search-brand" type="text" placeholder="분석할 키워드를 입력하세요" class="flex-1 p-5 bg-slate-50 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold border border-slate-100 text-lg">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        <button onclick="monitor('blog')" class="px-6 py-4 rounded-2xl bg-slate-50 hover:bg-green-50 text-slate-600 font-bold transition">🟢 블로그</button>
-                        <button onclick="monitor('cafe')" class="px-6 py-4 rounded-2xl bg-slate-50 hover:bg-emerald-50 text-slate-600 font-bold transition">☕ 카페</button>
-                        <button onclick="monitor('blackkiwi')" class="px-6 py-4 rounded-2xl bg-slate-50 hover:bg-orange-50 text-slate-600 hover:text-orange-600 font-bold transition">🥝 블랙키위</button>
-                        <button onclick="monitor('insta')" class="px-6 py-4 rounded-2xl bg-slate-50 hover:bg-pink-50 text-slate-600 font-bold transition">📸 인스타</button>
+            <div class="tool-card border-4 border-slate-100">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+                    <div>
+                        <h2 class="text-3xl font-black text-slate-800">📊 성과 시각화 리포트</h2>
+                        <p class="text-slate-400 font-medium mt-1">요일/제품/날짜/성별 등 첫 번째 항목 자동 분석</p>
                     </div>
-                </div>
-            </div>
-
-            <div class="tool-card">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
-                    <h2 class="text-2xl font-black text-slate-800">📊 성과 데이터 그래프</h2>
-                    <div class="flex items-center gap-4 bg-slate-50 px-5 py-3 rounded-2xl border border-slate-100">
-                        <div class="flex gap-2">
-                            <div onclick="setChartColor('#4f46e5')" class="color-selector bg-indigo-500 active" id="sel-indigo"></div>
-                            <div onclick="setChartColor('#e11d48')" class="color-selector bg-rose-500" id="sel-rose"></div>
-                            <div onclick="setChartColor('#10b981')" class="color-selector bg-emerald-500" id="sel-emerald"></div>
+                    
+                    <div class="flex items-center gap-6 bg-slate-50 px-6 py-4 rounded-[2rem] border border-slate-100">
+                        <div class="flex gap-4">
+                            <div onclick="setChartColor('#4f46e5')" class="color-selector bg-indigo-500 active" title="프로페셔널 인디고" id="sel-indigo"></div>
+                            <div onclick="setChartColor('#e11d48')" class="color-selector bg-rose-500" title="열정적 로즈" id="sel-rose"></div>
+                            <div onclick="setChartColor('#10b981')" class="color-selector bg-emerald-500" title="성장 에메랄드" id="sel-emerald"></div>
+                            <div onclick="setChartColor('#f59e0b')" class="color-selector bg-amber-500" title="하이라이트 앰버" id="sel-amber"></div>
                         </div>
-                        <button onclick="downloadChart()" class="bg-slate-800 text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-black transition-all">PNG 저장</button>
+                        <div class="w-px h-6 bg-slate-200"></div>
+                        <button onclick="downloadChart()" class="bg-slate-800 text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-black transition-all">PNG 저장</button>
                     </div>
                 </div>
-                <div id="drop-zone" class="w-full h-56 border-2 border-dashed border-slate-200 rounded-[3rem] flex flex-col items-center justify-center text-slate-400 hover:border-indigo-300 hover:bg-indigo-50 transition cursor-pointer">
-                    <span class="text-xl font-bold text-slate-600">파일을 드래그하거나 클릭하여 업로드</span>
-                    <p class="text-sm mt-2">매출액, 광고비(비용), 날짜 항목이 포함된 파일이면 OK!</p>
+
+                <div id="drop-zone" class="w-full h-80 border-4 border-dashed border-slate-100 rounded-[4rem] flex flex-col items-center justify-center text-slate-300 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all cursor-pointer group">
+                    <div class="text-center group-hover:scale-105 transition-transform">
+                        <div class="text-6xl mb-4">📂</div>
+                        <span class="text-2xl font-black text-slate-500">데이터 파일을 업로드하세요</span>
+                        <p class="text-lg mt-3 text-slate-400 font-medium italic">어떤 세로 항목이든 AI가 기준점으로 잡습니다.</p>
+                    </div>
                     <input type="file" id="file-input" multiple class="hidden">
                 </div>
-                <div id="chart-container" class="h-[550px] hidden">
-                    <canvas id="mkt-chart"></canvas>
-                </div>
-            </div>
-        </div>
 
-        <div id="content-manager" class="hidden space-y-6">
-            <div class="tool-card">
-                <h2 class="text-2xl font-black text-slate-800 mb-6">📁 원가 기반 데이터 분석</h2>
-                <div class="overflow-x-auto rounded-[2rem] border border-slate-100">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-500 font-bold border-b">
-                            <tr>
-                                <th class="p-5">항목</th><th class="p-5">매출액</th><th class="p-5">광고비</th><th class="p-5">ROAS</th><th class="p-5 text-emerald-600">마진액</th>
-                            </tr>
-                        </thead>
-                        <tbody id="data-table-body" class="divide-y divide-slate-50"></tbody>
-                    </table>
+                <div id="chart-container" class="h-[600px] hidden">
+                    <canvas id="mkt-chart"></canvas>
                 </div>
             </div>
         </div>
@@ -117,19 +102,14 @@
 
         setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
-        function switchTab(tab) {
-            document.getElementById('content-dashboard').classList.toggle('hidden', tab !== 'dashboard');
-            document.getElementById('content-manager').classList.toggle('hidden', tab !== 'manager');
-            document.getElementById('tab-dashboard').classList.toggle('active', tab === 'dashboard');
-            document.getElementById('tab-manager').classList.toggle('active', tab === 'manager');
-        }
-
+        // 4가지 컬러 업데이트 로직
         function setChartColor(hex) {
             activeColor = hex;
             document.querySelectorAll('.color-selector').forEach(el => el.classList.remove('active'));
             if(hex === '#4f46e5') document.getElementById('sel-indigo').classList.add('active');
             if(hex === '#e11d48') document.getElementById('sel-rose').classList.add('active');
             if(hex === '#10b981') document.getElementById('sel-emerald').classList.add('active');
+            if(hex === '#f59e0b') document.getElementById('sel-amber').classList.add('active');
             if(rawDataStore.length > 0) processData();
         }
 
@@ -159,97 +139,58 @@
 
         function processData() {
             if (rawDataStore.length === 0) return;
-            const body = document.getElementById('data-table-body');
-            body.innerHTML = '';
-
-            // [강화된 탐지] 헤더 찾기 (대소문자 무관, 포함 검색)
-            const headerRow = rawDataStore.find(row => row.some(cell => 
-                /(시간|날짜|매장|제품|총비용|광고비|매출|전환금액|구매금액)/i.test(String(cell))
-            ));
-            
-            if(!headerRow) {
-                alert("파일에서 '매출'이나 '비용' 항목을 찾을 수 없습니다. 헤더 이름을 확인해주세요!");
-                return;
-            }
-
-            const idx = {
-                label: headerRow.findIndex(h => /(시간|날짜|매장|제품)/i.test(String(h))),
-                rev: headerRow.findIndex(h => /(매출|전환금액|구매금액|구매완료)/i.test(String(h))),
-                spend: headerRow.findIndex(h => /(총비용|광고비|지출|비용)/i.test(String(h)))
+            const dict = {
+                rev: ['매출', '수입', 'Revenue', 'Sales', '전환금액', '구매금액'],
+                spend: ['광고비', '지출', 'Cost', 'Spend', '비용', '총비용']
             };
 
-            const labels = [], chartRev = [], chartSpend = [], chartRoas = [];
+            let headerIdx = -1;
+            for(let i=0; i<Math.min(rawDataStore.length, 10); i++) {
+                if (rawDataStore[i].some(cell => [...dict.rev, ...dict.spend].some(k => String(cell).includes(k)))) {
+                    headerIdx = i; break;
+                }
+            }
+            if(headerIdx === -1) return alert("매출이나 비용 항목을 찾을 수 없습니다!");
 
-            rawDataStore.forEach((row) => {
-                if (row === headerRow || !row[idx.label] || String(row[idx.label]).includes('합계')) return;
-                
-                // 숫자 변환 (콤마, 원화 표시 제거)
-                const parseNum = (val) => parseFloat(String(val).replace(/[^0-9.-]+/g, "")) || 0;
-                
+            const headerRow = rawDataStore[headerIdx];
+            const idx = {
+                label: 0, // 첫 번째 열 (요일/제품/날짜/분기 등)
+                rev: headerRow.findIndex(h => dict.rev.some(k => String(h).includes(k))),
+                spend: headerRow.findIndex(h => dict.spend.some(k => String(h).includes(k)))
+            };
+
+            const labels = [], revs = [], spends = [], roasArr = [];
+
+            rawDataStore.forEach((row, i) => {
+                if (i <= headerIdx || !row[idx.label] || String(row[idx.label]).includes('합계')) return;
+                const parseNum = (v) => parseFloat(String(v).replace(/[^0-9.-]+/g, "")) || 0;
                 const r = parseNum(row[idx.rev]);
                 const s = parseNum(row[idx.spend]);
                 const roas = s > 0 ? Math.round((r/s)*100) : 0;
-
                 if (r === 0 && s === 0) return;
 
                 labels.push(row[idx.label]);
-                chartRev.push(r);
-                chartSpend.push(s);
-                chartRoas.push(roas);
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition";
-                tr.innerHTML = `<td class="p-5 font-bold">${row[idx.label]}</td><td class="p-5 font-mono">${r.toLocaleString()}원</td><td class="p-5 font-mono text-slate-400">${s.toLocaleString()}원</td><td class="p-5 font-black">${roas}%</td><td class="p-5 text-emerald-600 font-bold">${(r-s).toLocaleString()}원</td>`;
-                body.appendChild(tr);
+                revs.push(r);
+                spends.push(s);
+                roasArr.push(roas);
             });
 
-            if(labels.length > 0) updateChart(labels, chartRev, chartSpend, chartRoas);
+            updateChart(labels, revs, spends, roasArr);
         }
 
         function updateChart(labels, revs, spends, roas) {
             const ctx = document.getElementById('mkt-chart').getContext('2d');
             document.getElementById('chart-container').classList.remove('hidden');
             document.getElementById('drop-zone').classList.add('hidden');
-            
             if (myChart) myChart.destroy();
 
             myChart = new Chart(ctx, {
                 data: {
                     labels: labels,
                     datasets: [
-                        {
-                            label: '로아스 (ROAS %)',
-                            type: 'line',
-                            data: roas,
-                            borderColor: activeColor, // 진한 선
-                            backgroundColor: activeColor,
-                            borderWidth: 4,
-                            pointRadius: 5,
-                            pointBackgroundColor: '#fff',
-                            yAxisID: 'y1',
-                            zIndex: 10
-                        },
-                        {
-                            label: '총비용 (Spend)',
-                            type: 'line',
-                            data: spends,
-                            borderColor: 'rgba(148, 163, 184, 0.4)', // 연한 점선
-                            borderDash: [6, 4],
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            fill: false,
-                            yAxisID: 'y',
-                            zIndex: 5
-                        },
-                        {
-                            label: '매출액 (Revenue)',
-                            type: 'bar',
-                            data: revs,
-                            backgroundColor: 'rgba(79, 70, 229, 0.1)', // 연한 막대
-                            borderRadius: 10,
-                            yAxisID: 'y',
-                            zIndex: 1
-                        }
+                        { label: '로아스 (ROAS %)', type: 'line', data: roas, borderColor: activeColor, backgroundColor: activeColor, borderWidth: 5, pointRadius: 6, pointBackgroundColor: '#fff', yAxisID: 'y1', zIndex: 10 },
+                        { label: '총비용 (Spend)', type: 'line', data: spends, borderColor: 'rgba(148, 163, 184, 0.4)', borderDash: [8, 4], borderWidth: 2, pointRadius: 0, yAxisID: 'y', zIndex: 5 },
+                        { label: '매출액 (Revenue)', type: 'bar', data: revs, backgroundColor: activeColor + '1A', borderRadius: 15, yAxisID: 'y', zIndex: 1 }
                     ]
                 },
                 options: {
@@ -257,19 +198,10 @@
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
                     scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            position: 'left',
-                            title: { display: true, text: '금액 (원)', font: { weight: 'bold' } }
-                        },
-                        y1: { 
-                            beginAtZero: true, 
-                            position: 'right',
-                            grid: { drawOnChartArea: false },
-                            title: { display: true, text: 'ROAS (%)', font: { weight: 'bold' } },
-                            ticks: { color: activeColor, font: { weight: 'bold' } }
-                        }
-                    }
+                        y: { beginAtZero: true, position: 'left', ticks: { callback: v => v.toLocaleString() + '원' } },
+                        y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: activeColor, font: { weight: 'bold' }, callback: v => v + '%' } }
+                    },
+                    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 20, font: { size: 14, weight: 'bold' } } } }
                 }
             });
         }
@@ -281,7 +213,7 @@
             if(s1 > 0) {
                 const val = (r1 / s1) * 100;
                 resRoas.innerText = Math.round(val) + '%';
-                resRoas.style.color = val >= 300 ? '#10b981' : '#ef4444';
+                resRoas.style.color = val >= 300 ? activeColor : '#ef4444';
             }
             const s2 = parseFloat(document.getElementById('calc-spend-2').value) || 0;
             const tr = parseFloat(document.getElementById('calc-target-roas').value) || 0;
@@ -294,9 +226,9 @@
             if(!brand) return alert('키워드를 입력해 주세요!');
             let url = "";
             switch(type) {
+                case 'blackkiwi': url = `https://blackkiwi.net/service/keyword-analysis?keyword=${encodeURIComponent(brand)}`; break;
                 case 'blog': url = `https://search.naver.com/search.naver?where=blog&query=${encodeURIComponent(brand)}`; break;
                 case 'cafe': url = `https://search.naver.com/search.naver?where=article&query=${encodeURIComponent(brand)}`; break;
-                case 'blackkiwi': url = `https://blackkiwi.net/service/keyword-analysis?keyword=${encodeURIComponent(brand)}`; break;
                 case 'insta': url = `https://www.instagram.com/explore/tags/${brand.replace(/\s/g, '')}/`; break;
             }
             window.open(url, '_blank');
@@ -305,7 +237,7 @@
         function downloadChart() {
             const link = document.createElement('a');
             link.href = document.getElementById('mkt-chart').toDataURL('image/png');
-            link.download = `성과보고서_${new Date().toLocaleDateString()}.png`;
+            link.download = `Performance_Report.png`;
             link.click();
         }
     </script>
