@@ -8,14 +8,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        .tool-card { @apply bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100; }
+        .tool-card { @apply bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 transition-all hover:shadow-md; }
         .tab-btn { @apply px-8 py-4 font-bold text-slate-400 border-b-4 border-transparent transition-all; }
         .tab-btn.active { @apply text-indigo-600 border-indigo-600; }
         .calc-input { @apply w-full p-4 bg-slate-50 rounded-2xl outline-none border border-slate-100 font-bold text-sm focus:ring-2 focus:ring-indigo-500; }
         .stat-label { @apply text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1 block; }
         .stat-value { @apply text-3xl font-black font-mono; }
-        
-        /* 그래프 톤 선택 버튼 전용 */
         .color-selector { @apply w-6 h-6 rounded-full cursor-pointer border-2 border-white shadow-sm hover:scale-110 transition-transform; }
         .color-selector.active { @apply ring-2 ring-slate-800; }
     </style>
@@ -51,44 +49,47 @@
         </div>
 
         <div id="content-dashboard" class="space-y-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="tool-card lg:col-span-2">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6">🔍 Trend Monitor</h2>
-                    <input id="search-brand" type="text" placeholder="분석할 키워드를 입력하세요" class="w-full p-5 bg-slate-50 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold mb-6 border border-slate-100 text-lg">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button onclick="monitor('blog')" class="py-4 rounded-2xl bg-slate-50 hover:bg-green-50 text-slate-600 hover:text-green-700 font-bold transition">🟢 블로그</button>
-                        <button onclick="monitor('cafe')" class="py-4 rounded-2xl bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 font-bold transition">☕ 카페</button>
-                        <button onclick="monitor('datalab')" class="py-4 rounded-2xl bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-blue-700 font-bold transition">📉 데이터랩</button>
-                        <button onclick="monitor('insta')" class="py-4 rounded-2xl bg-slate-50 hover:bg-pink-50 text-slate-600 hover:text-pink-700 font-bold transition">📸 인스타</button>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="tool-card border-2 border-indigo-50">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6 italic text-center">🎯 ROAS Calculator</h2>
+                    <div class="p-5 bg-slate-50 rounded-[2rem] border border-slate-100">
+                        <span class="stat-label text-indigo-500">광고비 대비 매출 효율 확인</span>
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 ml-2">광고비 입력</label>
+                                <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="0" class="calc-input mt-1">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 ml-2">매출액 입력</label>
+                                <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="0" class="calc-input mt-1">
+                            </div>
+                        </div>
+                        <div id="res-roas" class="mt-6 text-center text-4xl font-black text-slate-300 font-mono">0%</div>
                     </div>
                 </div>
 
-                <div class="tool-card border-2 border-indigo-50">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6 italic text-center">🎯 Quick Calculator</h2>
-                    <div class="space-y-6">
-                        <div class="p-5 bg-slate-50 rounded-[2rem] border border-slate-100">
-                            <span class="stat-label text-indigo-500">ROAS 계산 (쓴돈/번돈)</span>
-                            <div class="grid grid-cols-2 gap-2 mt-2">
-                                <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
-                                <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="매출액" class="calc-input">
+                <div class="tool-card border-2 border-emerald-50">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6 italic text-center">🎯 Target Revenue</h2>
+                    <div class="p-5 bg-emerald-50/30 rounded-[2rem] border border-emerald-100">
+                        <span class="stat-label text-emerald-600">목표 ROAS 달성을 위한 매출 확인</span>
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 ml-2">광고비 입력</label>
+                                <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="0" class="calc-input mt-1">
                             </div>
-                            <div id="res-roas" class="mt-4 text-center text-3xl font-black text-slate-300 font-mono">0%</div>
-                        </div>
-                        <div class="p-5 bg-indigo-50 rounded-[2rem] border border-indigo-100">
-                            <span class="stat-label text-indigo-600">목표 매출 계산 (쓴돈/목표KPI)</span>
-                            <div class="grid grid-cols-2 gap-2 mt-2">
-                                <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
-                                <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="목표 ROAS(%)" class="calc-input">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 ml-2">목표 ROAS (%)</label>
+                                <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="0" class="calc-input mt-1">
                             </div>
-                            <div id="res-target-rev" class="mt-4 text-right text-xl font-black text-indigo-600 font-mono">0원</div>
                         </div>
+                        <div id="res-target-rev" class="mt-6 text-right text-2xl font-black text-emerald-600 font-mono">0원</div>
                     </div>
                 </div>
             </div>
 
-            <div class="tool-card relative">
+            <div class="tool-card">
                 <div class="flex justify-between items-center mb-10">
-                    <h2 class="text-2xl font-black">📊 Performance Chart</h2>
+                    <h2 class="text-2xl font-black">📊 Performance Visualization</h2>
                     
                     <div class="flex items-center gap-4 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
                         <span class="text-[10px] font-bold text-slate-400 uppercase">Export Tone</span>
@@ -116,7 +117,7 @@
                 <div class="flex flex-col md:flex-row justify-between gap-6 mb-8">
                     <div>
                         <h2 class="text-2xl font-black text-slate-800">📁 Data Manager</h2>
-                        <p class="text-sm text-slate-400 mt-1 font-bold italic">매장/제품/날짜별 데이터 자동 분류 및 원가 기반 마진 분석</p>
+                        <p class="text-sm text-slate-400 mt-1 font-bold italic">매장/제품/날짜별 데이터 자동 분류 및 원가 기반 분석</p>
                     </div>
                     <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-3xl border border-slate-100">
                         <label class="text-xs font-black text-slate-500 uppercase">기존 원가율 설정</label>
@@ -147,7 +148,6 @@
     </div>
 
     <script>
-        // 기본 변수 및 시계
         let activeColor = '#4f46e5';
         let rawDataStore = [];
         let myChart = null;
@@ -161,15 +161,13 @@
             document.getElementById('tab-manager').classList.toggle('active', tab === 'manager');
         }
 
-        // 그래프 컬러 톤만 변경하는 기능
         function setChartColor(hex) {
             activeColor = hex;
             document.querySelectorAll('.color-selector').forEach(el => el.classList.remove('active'));
             if(hex === '#4f46e5') document.getElementById('sel-indigo').classList.add('active');
             if(hex === '#e11d48') document.getElementById('sel-rose').classList.add('active');
             if(hex === '#10b981') document.getElementById('sel-emerald').classList.add('active');
-            
-            if(rawDataStore.length > 0) processData(); // 차트 다시 그리기
+            if(rawDataStore.length > 0) processData();
         }
 
         function runCalc() {
@@ -248,7 +246,6 @@
             document.getElementById('top-spend').innerText = totalSpend.toLocaleString() + '원';
             document.getElementById('top-revenue').innerText = totalRev.toLocaleString() + '원';
             document.getElementById('top-roas').innerText = (totalSpend > 0 ? Math.round((totalRev / totalSpend) * 100) : 0) + '%';
-
             updateChart(labels, chartRev, chartRoas);
         }
 
@@ -269,16 +266,10 @@
             });
         }
 
-        function monitor(type) {
-            const brand = document.getElementById('search-brand').value;
-            if(!brand) return alert('입력해주세요!');
-            let url = (type === 'blog') ? `https://search.naver.com/search.naver?where=blog&query=${brand}` : (type === 'cafe') ? `https://search.naver.com/search.naver?where=article&query=${brand}` : (type === 'datalab') ? `https://datalab.naver.com/keyword/trendSearch.naver?keywordGroups[0].groupName=${brand}&keywordGroups[0].keywords[0]=${brand}` : `https://www.instagram.com/explore/tags/${brand.replace(/\s/g, '')}/`; window.open(url, '_blank');
-        }
-
         function downloadChart() {
             const link = document.createElement('a');
             link.href = document.getElementById('mkt-chart').toDataURL('image/png');
-            link.download = `Report_Color.png`;
+            link.download = `Report_Performance.png`;
             link.click();
         }
     </script>
