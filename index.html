@@ -23,7 +23,7 @@
         <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b pb-10">
             <div>
                 <h1 class="text-5xl font-black text-slate-800 tracking-tighter italic uppercase">Work Less, Earn More</h1>
-                <p class="text-indigo-600 mt-3 font-bold text-xl italic">효율적인 데이터 요약 & 트렌드 체크</p>
+                <p class="text-indigo-600 mt-3 font-bold text-xl">광고비 상위 요약 & 첫 번째 열 기준 리포트</p>
             </div>
         </header>
 
@@ -64,7 +64,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                     <div>
                         <h2 class="text-3xl font-black text-slate-800">📊 성과 시각화 리포트</h2>
-                        <p class="text-slate-400 font-medium mt-1">광고비 상위 10개 외 항목은 자동으로 <span class="text-indigo-500 font-bold">'기타'</span>로 묶입니다.</p>
+                        <p class="text-slate-400 font-medium mt-1">엑셀의 <span class="text-slate-900 font-bold">첫 번째 열</span>을 항목 이름으로 가져옵니다.</p>
                     </div>
                     
                     <div class="flex items-center gap-6 bg-slate-50 p-4 px-6 rounded-3xl border border-slate-200 shadow-inner">
@@ -85,7 +85,7 @@
                 <div id="drop-zone" class="w-full h-80 border-4 border-dashed border-slate-100 rounded-[3rem] flex flex-col items-center justify-center text-slate-300 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all cursor-pointer">
                     <div class="text-center">
                         <div class="text-6xl mb-4">📂</div>
-                        <span class="text-xl font-black text-slate-500">엑셀 데이터를 이곳에 드롭하세요</span>
+                        <span class="text-xl font-black text-slate-500 font-bold">제일 첫 열에 항목 이름이 있는 엑셀 드롭</span>
                     </div>
                     <input type="file" id="file-input" multiple class="hidden">
                 </div>
@@ -148,36 +148,35 @@
                     headerIdx = i; break;
                 }
             }
-            if(headerIdx === -1) return alert("항목을 찾을 수 없습니다.");
+            if(headerIdx === -1) return alert("헤더 정보를 찾을 수 없습니다.");
 
             const headerRow = rawDataStore[headerIdx];
             const idx = {
-                label: 0,
+                label: 0, // [수정] 무조건 첫 번째 열(A열)을 항목 이름으로 고정
                 rev: headerRow.findIndex(h => dict.rev.some(k => String(h).includes(k))),
                 spend: headerRow.findIndex(h => dict.spend.some(k => String(h).includes(k)))
             };
 
             let items = [];
             rawDataStore.forEach((row, i) => {
+                // 헤더 이후 데이터만 처리 & 합계 행 제외 & 첫 열 데이터가 있어야 함
                 if (i <= headerIdx || !row[idx.label] || String(row[idx.label]).includes('합계')) return;
+                
                 const parseNum = (v) => parseFloat(String(v).replace(/[^0-9.-]+/g, "")) || 0;
                 const r = parseNum(row[idx.rev]);
                 const s = parseNum(row[idx.spend]);
+                
                 if (r === 0 && s === 0) return;
-                items.push({ label: row[idx.label], rev: r, spend: s });
+                items.push({ label: String(row[idx.label]), rev: r, spend: s });
             });
 
-            // [추가 로직] 항목이 20개 이상일 경우 처리
+            // 항목이 20개 이상일 경우 상위 10개 요약 로직
             if (items.length >= 20) {
-                // 광고비(spend) 기준 내림차순 정렬
                 items.sort((a, b) => b.spend - a.spend);
-                
                 const top10 = items.slice(0, 10);
                 const others = items.slice(10);
-                
                 const otherRev = others.reduce((acc, curr) => acc + curr.rev, 0);
                 const otherSpend = others.reduce((acc, curr) => acc + curr.spend, 0);
-                
                 items = [...top10, { label: '기타 (외 ' + others.length + '개)', rev: otherRev, spend: otherSpend }];
             }
 
@@ -247,7 +246,7 @@
         function downloadChart() {
             const link = document.createElement('a');
             link.href = document.getElementById('mkt-chart').toDataURL('image/png');
-            link.download = `Performance_Summary.png`;
+            link.download = `Report_Summary.png`;
             link.click();
         }
     </script>
