@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AE Marketing Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .tool-card { @apply bg-white p-6 rounded-3xl shadow-sm border border-slate-100 transition-all hover:shadow-lg; }
+    </style>
 </head>
 <body class="bg-slate-50 min-h-screen p-4 md:p-8 font-sans text-slate-900">
     <div class="max-w-6xl mx-auto">
@@ -17,120 +22,179 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-indigo-600 mb-4 flex items-center gap-2">🔍 한 달 데이터 퀵 모니터링 (최신순)</h2>
-                <input id="search-brand" type="text" placeholder="분석할 업체명 입력" class="w-full p-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold mb-4">
-                
+            <div class="tool-card">
+                <h2 class="text-lg font-bold text-indigo-600 mb-4">🔍 데이터 퀵 모니터링 (최신순)</h2>
+                <input id="search-brand" type="text" placeholder="분석할 업체명 입력" class="w-full p-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold mb-4 border border-slate-100">
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="monitor('blog')" class="py-3 px-4 rounded-xl bg-green-50 text-green-700 border border-green-200 font-bold hover:bg-green-100 transition text-sm">
-                        🟢 블로그 (최근1달/최신순)
-                    </button>
-                    <button onclick="monitor('cafe')" class="py-3 px-4 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold hover:bg-emerald-100 transition text-sm">
-                        ☕ 카페 (최근1달/최신순)
-                    </button>
-                    <button onclick="monitor('datalab')" class="py-3 px-4 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 font-bold hover:bg-blue-100 transition text-sm">
-                        📉 검색 트렌드 (데이터랩)
-                    </button>
-                    <button onclick="monitor('insta')" class="py-3 px-4 rounded-xl bg-pink-50 text-pink-700 border border-pink-200 font-bold hover:bg-pink-100 transition text-sm">
-                        📸 인스타그램 태그
-                    </button>
+                    <button onclick="monitor('blog')" class="py-3 px-4 rounded-xl bg-green-50 text-green-700 border border-green-200 font-bold hover:bg-green-100 transition text-sm">🟢 블로그 (1달/최신순)</button>
+                    <button onclick="monitor('cafe')" class="py-3 px-4 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold hover:bg-emerald-100 transition text-sm">☕ 카페 (1달/최신순)</button>
+                    <button onclick="monitor('datalab')" class="py-3 px-4 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 font-bold hover:bg-blue-100 transition text-sm">📉 검색 트렌드 (데이터랩)</button>
+                    <button onclick="monitor('insta')" class="py-3 px-4 rounded-xl bg-pink-50 text-pink-700 border border-pink-200 font-bold hover:bg-pink-100 transition text-sm">📸 인스타 태그</button>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center justify-between">
-                    📊 위클리 수치 기록
-                    <button onclick="saveStats()" class="text-xs bg-slate-800 text-white px-3 py-1 rounded-full">저장</button>
-                </h2>
+            <div class="tool-card">
+                <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center justify-between">📊 위클리 수치 기록 <button onclick="saveStats()" class="text-xs bg-slate-800 text-white px-3 py-1 rounded-full">저장</button></h2>
                 <div class="grid grid-cols-3 gap-4">
                     <div class="text-center">
                         <label class="text-[10px] text-slate-400 font-bold uppercase">블로그 글</label>
-                        <input id="stat-blog" type="text" placeholder="000" class="w-full mt-1 p-2 bg-slate-50 rounded text-center font-bold outline-none border-b-2 border-green-500">
+                        <input id="stat-blog" type="text" placeholder="000" class="w-full mt-1 p-2 bg-slate-50 rounded text-center font-bold outline-none border-b-2 border-green-500 text-sm">
                     </div>
                     <div class="text-center">
                         <label class="text-[10px] text-slate-400 font-bold uppercase">카페 언급</label>
-                        <input id="stat-cafe" type="text" placeholder="000" class="w-full mt-1 p-2 bg-slate-50 rounded text-center font-bold outline-none border-b-2 border-emerald-500">
+                        <input id="stat-cafe" type="text" placeholder="000" class="w-full mt-1 p-2 bg-slate-50 rounded text-center font-bold outline-none border-b-2 border-emerald-500 text-sm">
                     </div>
                     <div class="text-center">
                         <label class="text-[10px] text-slate-400 font-bold uppercase">인스타 태그</label>
-                        <input id="stat-insta" type="text" placeholder="000" class="w-full mt-1 p-2 bg-slate-50 rounded text-center font-bold outline-none border-b-2 border-pink-500">
+                        <input id="stat-insta" type="text" placeholder="000" class="w-full mt-1 p-2 bg-slate-50 rounded text-center font-bold outline-none border-b-2 border-pink-500 text-sm">
                     </div>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-4 italic text-center text-rose-400">* 직접 눈으로 확인한 수치를 적어두면 브라우저에 남습니다.</p>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-md font-bold text-orange-600 mb-4">💰 목표 매출 계산</h2>
-                <input id="t-spend" type="number" oninput="calcT()" placeholder="예상 광고비" class="w-full p-2 bg-slate-50 rounded mb-2 text-sm outline-none border border-slate-100">
-                <input id="t-roas" type="number" oninput="calcT()" placeholder="목표 ROAS %" class="w-full p-2 bg-slate-50 rounded mb-4 text-sm outline-none border border-slate-100">
-                <div class="p-4 bg-orange-50 rounded-xl">
-                    <div id="t-res" class="text-2xl font-black text-orange-700 text-center font-mono text-sm">0원</div>
-                </div>
+        <div class="tool-card relative mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-bold text-slate-800">📊 보고서용 마케팅 성과 그래프</h2>
+                <button onclick="downloadChart()" class="text-xs bg-indigo-600 text-white px-4 py-2 rounded-full font-bold shadow-md hover:bg-indigo-700">이미지 저장 (PNG)</button>
+            </div>
+            
+            <div id="drop-zone" class="w-full h-44 border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center text-slate-400 hover:border-indigo-300 hover:bg-indigo-50 transition cursor-pointer mb-6">
+                <span class="text-4xl mb-2">📈</span>
+                <span class="text-sm font-bold text-slate-600">엑셀 파일을 드래그하여 업로드</span>
+                <span class="text-[11px] text-slate-400 mt-2">필수 포함 단어: [날짜], [총비용], [구매완료전환매출액]</span>
+                <input type="file" id="file-input" accept=".xlsx, .xls" class="hidden">
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 md:col-span-2">
-                <h2 class="text-md font-bold text-indigo-600 mb-4">📝 전략 메모 및 분석 요약</h2>
-                <textarea id="memo" class="w-full h-32 p-4 bg-slate-50 rounded-xl outline-none text-sm leading-relaxed border border-slate-100 focus:ring-2 focus:ring-indigo-400" placeholder="한 달간의 트렌드 변화나 특이사항을 기록하세요..."></textarea>
+            <div id="chart-container" class="h-96 hidden">
+                <canvas id="mkt-chart"></canvas>
             </div>
         </div>
     </div>
 
     <script>
-        // 시계 기능
         setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
-        // 모니터링 함수 (최신순 필터 강화)
         function monitor(type) {
             const brand = document.getElementById('search-brand').value;
             if(!brand) return alert('업체명을 입력해주세요!');
-            
             let url = "";
-            // nso=so:dd (최신순 정렬) / p:1m (최근 1개월)
-            if(type === 'blog') {
-                url = `https://search.naver.com/search.naver?where=blog&query=${brand}&sm=tab_opt&nso=so%3Add%2Cp%3A1m`;
-            }
-            if(type === 'cafe') {
-                url = `https://search.naver.com/search.naver?where=article&query=${brand}&sm=tab_opt&nso=so%3Add%2Cp%3A1m`;
-            }
-            if(type === 'datalab') {
-                url = `https://datalab.naver.com/keyword/trendSearch.naver?keywordGroups[0].groupName=${brand}&keywordGroups[0].keywords[0]=${brand}`;
-            }
-            if(type === 'insta') {
-                url = `https://www.instagram.com/explore/tags/${brand.replace(/\s/g, '')}/`;
-            }
-            
+            if(type === 'blog') url = `https://search.naver.com/search.naver?where=blog&query=${brand}&sm=tab_opt&nso=so%3Add%2Cp%3A1m`;
+            if(type === 'cafe') url = `https://search.naver.com/search.naver?where=article&query=${brand}&sm=tab_opt&nso=so%3Add%2Cp%3A1m`;
+            if(type === 'datalab') url = `https://datalab.naver.com/keyword/trendSearch.naver?keywordGroups[0].groupName=${brand}&keywordGroups[0].keywords[0]=${brand}`;
+            if(type === 'insta') url = `https://www.instagram.com/explore/tags/${brand.replace(/\s/g, '')}/`;
             window.open(url, '_blank');
         }
 
-        // 목표 매출 계산기
-        function calcT() {
-            const s = parseFloat(document.getElementById('t-spend').value) || 0;
-            const r = parseFloat(document.getElementById('t-roas').value) || 0;
-            document.getElementById('t-res').innerText = s > 0 && r > 0 ? Math.round(s * (r/100)).toLocaleString() + '원' : '0원';
-        }
-
-        // 로컬 저장 기능
         function saveStats() {
-            const stats = {
+            localStorage.setItem('ae_stats', JSON.stringify({
                 blog: document.getElementById('stat-blog').value,
                 cafe: document.getElementById('stat-cafe').value,
-                insta: document.getElementById('stat-insta').value,
-                memo: document.getElementById('memo').value
-            };
-            localStorage.setItem('ae_stats', JSON.stringify(stats));
+                insta: document.getElementById('stat-insta').value
+            }));
             alert('기록이 저장되었습니다!');
         }
 
-        // 페이지 로드 시 저장된 데이터 불러오기
         window.onload = () => {
             const saved = JSON.parse(localStorage.getItem('ae_stats') || '{}');
             document.getElementById('stat-blog').value = saved.blog || '';
             document.getElementById('stat-cafe').value = saved.cafe || '';
             document.getElementById('stat-insta').value = saved.insta || '';
-            document.getElementById('memo').value = saved.memo || '';
+        }
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        let myChart = null;
+
+        dropZone.onclick = () => fileInput.click();
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('bg-indigo-50'); };
+        dropZone.ondragleave = () => dropZone.classList.remove('bg-indigo-50');
+        dropZone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
+        fileInput.onchange = (e) => handleFile(e.target.files[0]);
+
+        function handleFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const workbook = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {raw: false});
+                createChart(json);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function createChart(data) {
+            if (data.length === 0) return alert('데이터가 없습니다.');
+
+            const findKey = (row, targetName) => {
+                return Object.keys(row).find(key => key.replace(/\s/g, '').includes(targetName.replace(/\s/g, '')));
+            };
+
+            const firstRow = data[0];
+            const dateKey = findKey(firstRow, '날짜') || Object.keys(firstRow)[0];
+            const costKey = findKey(firstRow, '총비용'); // 광고비
+            const revenueKey = findKey(firstRow, '구매완료전환매출액'); // 매출액
+
+            if (!costKey || !revenueKey) {
+                return alert('엑셀 항목명을 확인해주세요!\n포함되어야 할 단어: 총비용, 구매완료전환매출액');
+            }
+
+            const labels = data.map(row => row[dateKey]);
+            const costs = data.map(row => parseFloat(String(row[costKey]).replace(/,/g, '')) || 0);
+            const revenues = data.map(row => parseFloat(String(row[revenueKey]).replace(/,/g, '')) || 0);
+
+            document.getElementById('chart-container').classList.remove('hidden');
+            document.getElementById('drop-zone').classList.add('hidden');
+
+            const ctx = document.getElementById('mkt-chart').getContext('2d');
+            if (myChart) myChart.destroy();
+
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '매출액 (구매완료 전환매출액)',
+                            data: revenues,
+                            backgroundColor: 'rgba(99, 102, 241, 0.4)',
+                            borderColor: 'rgb(99, 102, 241)',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '광고비 (총비용)',
+                            data: costs,
+                            type: 'line',
+                            borderColor: 'rgb(249, 115, 22)',
+                            borderWidth: 3,
+                            pointBackgroundColor: 'rgb(249, 115, 22)',
+                            fill: false,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 12, weight: 'bold' } } },
+                        title: { display: true, text: '광고 집행 대비 매출 효율 분석', font: { size: 18, weight: 'black' }, padding: 20 }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function downloadChart() {
+            if (!myChart) return alert('그래프를 먼저 생성해주세요!');
+            const link = document.createElement('a');
+            link.href = document.getElementById('mkt-chart').toDataURL('image/png');
+            link.download = `mkt_performance_${new Date().toISOString().slice(0,10)}.png`;
+            link.click();
         }
     </script>
 </body>
