@@ -64,7 +64,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                     <div>
                         <h2 class="text-3xl font-black text-slate-800">📊 다차원 보고서 그래프화</h2>
-                        <p class="text-slate-400 font-medium mt-1">A열 3행 데이터부터 광고비가 높은 순으로 정렬합니다.</p>
+                        <p class="text-slate-400 font-medium mt-1">엑셀 순서대로 나열하며, 항목이 많을 시 광고비 기준 상위 10개를 선별합니다.</p>
                     </div>
                     
                     <div class="flex items-center gap-6 bg-slate-50 p-4 px-6 rounded-3xl border border-slate-200 shadow-inner">
@@ -126,7 +126,6 @@
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, {type: 'array'});
                         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                        // JSON 변환 시 공백 행 무시 옵션 추가
                         resolve(XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" }));
                     };
                     reader.readAsArrayBuffer(file);
@@ -141,19 +140,16 @@
         function processData() {
             if (rawDataStore.length < 3) return;
             const dict = {
-                rev: ['매출', '수입', 'Revenue', 'Sales', '전환금액', '구매금액', '합계'],
+                rev: ['매출', '수입', 'Revenue', 'Sales', '전환금액', '구매금액'],
                 spend: ['광고비', '지출', 'Cost', 'Spend', '비용', '총비용', '금액']
             };
 
-            // 헤더 자동 탐색 (보통 1~5행 사이에 있음)
             let headerIdx = -1;
             for(let i=0; i<Math.min(rawDataStore.length, 10); i++) {
                 if (rawDataStore[i] && rawDataStore[i].some(cell => [...dict.rev, ...dict.spend].some(k => String(cell).includes(k)))) {
                     headerIdx = i; break;
                 }
             }
-
-            // 헤더를 못 찾아도 강행 (A열 3행 기준)
             if(headerIdx === -1) headerIdx = 2;
 
             const headerRow = rawDataStore[headerIdx];
@@ -164,40 +160,55 @@
             };
 
             let items = [];
-            // A열 3행(인덱스 2)부터 순회
+            // 오리지널 순서 유지를 위해 i 값을 id로 함께 저장
             for(let i = 2; i < rawDataStore.length; i++) {
                 const row = rawDataStore[i];
-                if (!row || !row[idx.label] || String(row[idx.label]).includes('합계') || i === headerIdx) continue;
+                if (!row || row[idx.label] === "" || String(row[idx.label]).includes('합계') || i === headerIdx) continue;
                 
                 const parseNum = (v) => {
                     if(!v) return 0;
                     return parseFloat(String(v).replace(/[^0-9.-]+/g, "")) || 0;
                 };
 
-                const r = idx.rev !== -1 ? parseNum(row[idx.rev]) : 0;
-                const s = idx.spend !== -1 ? parseNum(row[idx.spend]) : 0;
-                
-                if (r === 0 && s === 0) continue;
-                items.push({ label: String(row[idx.label]), rev: r, spend: s });
+                items.push({ 
+                    id: i,
+                    label: String(row[idx.label]), 
+                    rev: idx.rev !== -1 ? parseNum(row[idx.rev]) : 0, 
+                    spend: idx.spend !== -1 ? parseNum(row[idx.spend]) : 0 
+                });
             }
 
-            if (items.length === 0) {
-                alert("데이터를 추출할 수 없습니다. 엑셀 형식을 확인해주세요.");
-                return;
-            }
+            if (items.length === 0) return;
 
-            // [광고비 기준 정렬]
-            items.sort((a, b) => b.spend - a.spend);
-
-            // 20개 이상일 때 요약
+            // [수정] 항목이 20개 이상일 때만 로직 실행
             if (items.length >= 20) {
-                const top10 = items.slice(0, 10);
-                const others = items.slice(10);
-                const otherRev = others.reduce((acc, curr) => acc + curr.rev, 0);
-                const otherSpend = others.reduce((acc, curr) => acc + curr.spend, 0);
-                items = [...top10, { label: '기타 (외 ' + others.length + '개)', rev: otherRev, spend: otherSpend }];
+                // 1. 광고비 순으로 정렬해서 상위 10개 추출
+                const sortedBySpend = [...items].sort((a, b) => b.spend - a.spend);
+                const top10Ids = new Set(sortedBySpend.slice(0, 10).map(i => i.id));
+                
+                const finalItems = [];
+                let otherRev = 0;
+                let otherSpend = 0;
+                let otherCount = 0;
+
+                // 2. 원래 순서대로 돌면서 상위 10개에 포함 안 되면 '기타'로 합산
+                items.forEach(item => {
+                    if (top10Ids.has(item.id)) {
+                        finalItems.push(item);
+                    } else {
+                        otherRev += item.rev;
+                        otherSpend += item.spend;
+                        otherCount++;
+                    }
+                });
+                
+                if (otherCount > 0) {
+                    finalItems.push({ label: `기타 (외 ${otherCount}개)`, rev: otherRev, spend: otherSpend });
+                }
+                items = finalItems;
             }
 
+            // 정렬 없이 엑셀에 있던 순서 그대로 반영
             const labels = items.map(i => i.label);
             const revs = items.map(i => i.rev);
             const spends = items.map(i => i.spend);
@@ -267,7 +278,7 @@
         function downloadChart() {
             const link = document.createElement('a');
             link.href = document.getElementById('mkt-chart').toDataURL('image/png');
-            link.download = `Performance_Analysis.png`;
+            link.download = `Performance_Report.png`;
             link.click();
         }
     </script>
