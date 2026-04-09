@@ -9,7 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
-        body { font-family: 'Pretendard', sans-serif; }
+        body { font-family: 'Pretendard', sans-serif; letter-spacing: -0.02em; }
         .tool-card { @apply bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 transition-all hover:shadow-md; }
         .tab-btn { @apply px-8 py-4 font-bold text-slate-400 border-b-4 border-transparent transition-all; }
         .tab-btn.active { @apply text-indigo-600 border-indigo-600; }
@@ -39,14 +39,8 @@
                     <h2 class="text-xl font-bold text-slate-800 mb-6 italic text-center">🎯 ROAS 계산기</h2>
                     <div class="p-5 bg-slate-50 rounded-[2rem] border border-slate-100">
                         <div class="grid grid-cols-2 gap-4 mt-2">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 ml-2">광고비(지출)</label>
-                                <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="0" class="calc-input mt-1">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 ml-2">매출액(수입)</label>
-                                <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="0" class="calc-input mt-1">
-                            </div>
+                            <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
+                            <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="매출액" class="calc-input">
                         </div>
                         <div id="res-roas" class="mt-6 text-center text-4xl font-black text-slate-300 font-mono">0%</div>
                     </div>
@@ -55,14 +49,8 @@
                     <h2 class="text-xl font-bold text-slate-800 mb-6 italic text-center">🎯 목표 매출 계산기</h2>
                     <div class="p-5 bg-emerald-50/30 rounded-[2rem] border border-emerald-100">
                         <div class="grid grid-cols-2 gap-4 mt-2">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 ml-2">광고비(지출)</label>
-                                <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="0" class="calc-input mt-1">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 ml-2">목표 ROAS (%)</label>
-                                <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="0" class="calc-input mt-1">
-                            </div>
+                            <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
+                            <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="목표 ROAS(%)" class="calc-input">
                         </div>
                         <div id="res-target-rev" class="mt-6 text-right text-2xl font-black text-emerald-600 font-mono">0원</div>
                     </div>
@@ -85,21 +73,18 @@
             <div class="tool-card">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
                     <h2 class="text-2xl font-black text-slate-800">📊 성과 데이터 그래프</h2>
-                    
                     <div class="flex items-center gap-4 bg-slate-50 px-5 py-3 rounded-2xl border border-slate-100">
-                        <span class="text-[11px] font-black text-slate-400 uppercase italic tracking-widest">Graph Tone</span>
                         <div class="flex gap-2">
                             <div onclick="setChartColor('#4f46e5')" class="color-selector bg-indigo-500 active" id="sel-indigo"></div>
                             <div onclick="setChartColor('#e11d48')" class="color-selector bg-rose-500" id="sel-rose"></div>
                             <div onclick="setChartColor('#10b981')" class="color-selector bg-emerald-500" id="sel-emerald"></div>
                         </div>
-                        <div class="w-px h-4 bg-slate-200 mx-2"></div>
                         <button onclick="downloadChart()" class="bg-slate-800 text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-black transition-all">PNG 저장</button>
                     </div>
                 </div>
-
                 <div id="drop-zone" class="w-full h-56 border-2 border-dashed border-slate-200 rounded-[3rem] flex flex-col items-center justify-center text-slate-400 hover:border-indigo-300 hover:bg-indigo-50 transition cursor-pointer">
-                    <span class="text-xl font-bold text-slate-600">파일을 드래그하거나 클릭하여 업로드 (CSV/Excel)</span>
+                    <span class="text-xl font-bold text-slate-600">파일을 드래그하거나 클릭하여 업로드</span>
+                    <p class="text-sm mt-2">매출액, 광고비(비용), 날짜 항목이 포함된 파일이면 OK!</p>
                     <input type="file" id="file-input" multiple class="hidden">
                 </div>
                 <div id="chart-container" class="h-[550px] hidden">
@@ -115,12 +100,10 @@
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 text-slate-500 font-bold border-b">
                             <tr>
-                                <th class="p-5">구분(항목)</th><th class="p-5">매출액</th><th class="p-5">광고비</th><th class="p-5">ROAS</th><th class="p-5 text-emerald-600">마진액(수익)</th>
+                                <th class="p-5">항목</th><th class="p-5">매출액</th><th class="p-5">광고비</th><th class="p-5">ROAS</th><th class="p-5 text-emerald-600">마진액</th>
                             </tr>
                         </thead>
-                        <tbody id="data-table-body" class="divide-y divide-slate-50">
-                            <tr><td colspan="5" class="p-20 text-center text-slate-300 font-bold">파일을 업로드하면 분석 결과가 나타납니다.</td></tr>
-                        </tbody>
+                        <tbody id="data-table-body" class="divide-y divide-slate-50"></tbody>
                     </table>
                 </div>
             </div>
@@ -128,14 +111,12 @@
     </div>
 
     <script>
-        let activeColor = '#4f46e5'; // 기본 인디고
+        let activeColor = '#4f46e5';
         let rawDataStore = [];
         let myChart = null;
 
-        // 시계 기능
         setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
-        // 탭 전환
         function switchTab(tab) {
             document.getElementById('content-dashboard').classList.toggle('hidden', tab !== 'dashboard');
             document.getElementById('content-manager').classList.toggle('hidden', tab !== 'manager');
@@ -143,19 +124,15 @@
             document.getElementById('tab-manager').classList.toggle('active', tab === 'manager');
         }
 
-        // 컬러 톤 변경 로직
         function setChartColor(hex) {
             activeColor = hex;
             document.querySelectorAll('.color-selector').forEach(el => el.classList.remove('active'));
             if(hex === '#4f46e5') document.getElementById('sel-indigo').classList.add('active');
             if(hex === '#e11d48') document.getElementById('sel-rose').classList.add('active');
             if(hex === '#10b981') document.getElementById('sel-emerald').classList.add('active');
-            
-            // 데이터가 이미 있는 경우 차트 즉시 갱신
             if(rawDataStore.length > 0) processData();
         }
 
-        // 파일 업로드 처리
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
         dropZone.onclick = () => fileInput.click();
@@ -180,19 +157,25 @@
             });
         }
 
-        // 데이터 가공 및 그래프 데이터 생성
         function processData() {
             if (rawDataStore.length === 0) return;
             const body = document.getElementById('data-table-body');
             body.innerHTML = '';
 
-            const headerRow = rawDataStore.find(row => row.some(cell => /시간|날짜|매장|제품|총비용|매출/.test(String(cell))));
-            if(!headerRow) return;
+            // [강화된 탐지] 헤더 찾기 (대소문자 무관, 포함 검색)
+            const headerRow = rawDataStore.find(row => row.some(cell => 
+                /(시간|날짜|매장|제품|총비용|광고비|매출|전환금액|구매금액)/i.test(String(cell))
+            ));
+            
+            if(!headerRow) {
+                alert("파일에서 '매출'이나 '비용' 항목을 찾을 수 없습니다. 헤더 이름을 확인해주세요!");
+                return;
+            }
 
             const idx = {
-                label: headerRow.findIndex(h => /시간|날짜|매장|제품/.test(h)),
-                rev: headerRow.findIndex(h => /매출액|전환매출액/.test(h)),
-                spend: headerRow.findIndex(h => /총비용|광고비/.test(h))
+                label: headerRow.findIndex(h => /(시간|날짜|매장|제품)/i.test(String(h))),
+                rev: headerRow.findIndex(h => /(매출|전환금액|구매금액|구매완료)/i.test(String(h))),
+                spend: headerRow.findIndex(h => /(총비용|광고비|지출|비용)/i.test(String(h)))
             };
 
             const labels = [], chartRev = [], chartSpend = [], chartRoas = [];
@@ -200,8 +183,11 @@
             rawDataStore.forEach((row) => {
                 if (row === headerRow || !row[idx.label] || String(row[idx.label]).includes('합계')) return;
                 
-                const r = parseFloat(String(row[idx.rev]).replace(/[^0-9.-]+/g, "")) || 0;
-                const s = parseFloat(String(row[idx.spend]).replace(/[^0-9.-]+/g, "")) || 0;
+                // 숫자 변환 (콤마, 원화 표시 제거)
+                const parseNum = (val) => parseFloat(String(val).replace(/[^0-9.-]+/g, "")) || 0;
+                
+                const r = parseNum(row[idx.rev]);
+                const s = parseNum(row[idx.spend]);
                 const roas = s > 0 ? Math.round((r/s)*100) : 0;
 
                 if (r === 0 && s === 0) return;
@@ -217,10 +203,9 @@
                 body.appendChild(tr);
             });
 
-            updateChart(labels, chartRev, chartSpend, chartRoas);
+            if(labels.length > 0) updateChart(labels, chartRev, chartSpend, chartRoas);
         }
 
-        // 3중 지표 그래프 그리기
         function updateChart(labels, revs, spends, roas) {
             const ctx = document.getElementById('mkt-chart').getContext('2d');
             document.getElementById('chart-container').classList.remove('hidden');
@@ -236,7 +221,7 @@
                             label: '로아스 (ROAS %)',
                             type: 'line',
                             data: roas,
-                            borderColor: activeColor, // [진한 선] 사용자 선택 컬러
+                            borderColor: activeColor, // 진한 선
                             backgroundColor: activeColor,
                             borderWidth: 4,
                             pointRadius: 5,
@@ -248,7 +233,7 @@
                             label: '총비용 (Spend)',
                             type: 'line',
                             data: spends,
-                            borderColor: 'rgba(148, 163, 184, 0.4)', // [연한 점선] 회색
+                            borderColor: 'rgba(148, 163, 184, 0.4)', // 연한 점선
                             borderDash: [6, 4],
                             borderWidth: 2,
                             pointRadius: 0,
@@ -260,7 +245,7 @@
                             label: '매출액 (Revenue)',
                             type: 'bar',
                             data: revs,
-                            backgroundColor: 'rgba(79, 70, 229, 0.1)', // [연한 막대]
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)', // 연한 막대
                             borderRadius: 10,
                             yAxisID: 'y',
                             zIndex: 1
@@ -289,7 +274,6 @@
             });
         }
 
-        // 계산기 로직
         function runCalc() {
             const s1 = parseFloat(document.getElementById('calc-spend-1').value) || 0;
             const r1 = parseFloat(document.getElementById('calc-rev-1').value) || 0;
@@ -299,18 +283,15 @@
                 resRoas.innerText = Math.round(val) + '%';
                 resRoas.style.color = val >= 300 ? '#10b981' : '#ef4444';
             }
-
             const s2 = parseFloat(document.getElementById('calc-spend-2').value) || 0;
             const tr = parseFloat(document.getElementById('calc-target-roas').value) || 0;
             const resTarget = document.getElementById('res-target-rev');
             if(s2 > 0 && tr > 0) resTarget.innerText = Math.round(s2 * (tr/100)).toLocaleString() + '원';
         }
 
-        // 트렌드 모니터 (블랙키위 연동)
         function monitor(type) {
             const brand = document.getElementById('search-brand').value;
             if(!brand) return alert('키워드를 입력해 주세요!');
-            
             let url = "";
             switch(type) {
                 case 'blog': url = `https://search.naver.com/search.naver?where=blog&query=${encodeURIComponent(brand)}`; break;
@@ -321,11 +302,10 @@
             window.open(url, '_blank');
         }
 
-        // 이미지 저장
         function downloadChart() {
             const link = document.createElement('a');
             link.href = document.getElementById('mkt-chart').toDataURL('image/png');
-            link.download = `마케팅_성과보고서_${new Date().toLocaleDateString()}.png`;
+            link.download = `성과보고서_${new Date().toLocaleDateString()}.png`;
             link.click();
         }
     </script>
