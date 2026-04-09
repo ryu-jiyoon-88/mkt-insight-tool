@@ -29,13 +29,13 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <button onclick="monitor('blog')" class="py-4 px-2 rounded-2xl bg-green-50 text-green-700 border border-green-100 font-bold hover:bg-green-100 transition text-sm">🟢 블로그 최신순</button>
                     <button onclick="monitor('cafe')" class="py-4 px-2 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold hover:bg-emerald-100 transition text-sm">☕ 카페 최신순</button>
-                    <button onclick="monitor('datalab')" class="py-4 px-2 rounded-2xl bg-blue-50 text-blue-700 border border-blue-100 font-bold hover:bg-blue-100 transition text-sm">📉 데이터랩</button>
-                    <button onclick="monitor('insta')" class="py-4 px-2 rounded-2xl bg-pink-50 text-pink-700 border border-pink-100 font-bold hover:bg-pink-100 transition text-sm">📸 인스타 태그</button>
+                    <button onclick="monitor('datalab')" class="py-4 px-2 rounded-2xl bg-blue-50 text-blue-700 border border-blue-200 font-bold hover:bg-blue-100 transition text-sm">📉 데이터랩</button>
+                    <button onclick="monitor('insta')" class="py-4 px-2 rounded-2xl bg-pink-50 text-pink-700 border border-pink-200 font-bold hover:bg-pink-100 transition text-sm">📸 인스타 태그</button>
                 </div>
             </div>
 
             <div class="tool-card">
-                <h2 class="text-xl font-bold text-slate-800 mb-6 italic italic">💰 실시간 퀵 계산기</h2>
+                <h2 class="text-xl font-bold text-slate-800 mb-6 italic">💰 실시간 퀵 계산기</h2>
                 <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-2">
                         <input id="roas-spend" type="number" oninput="calcAll()" placeholder="광고비" class="p-3 bg-slate-50 rounded-xl outline-none text-sm border border-slate-100">
@@ -46,7 +46,7 @@
                         <span id="roas-res" class="text-3xl font-black text-slate-300 font-mono">0%</span>
                     </div>
                     <div class="pt-2 border-t border-dashed">
-                        <label class="text-xs font-bold text-orange-500 mb-2 block">목표 ROAS 설정 시 필요 매출액</label>
+                        <label class="text-xs font-bold text-orange-500 mb-2 block tracking-tighter">목표 ROAS 설정 시 필요 매출액</label>
                         <input id="t-roas" type="number" oninput="calcAll()" placeholder="목표 ROAS (%)" class="w-full p-3 bg-slate-50 rounded-xl outline-none text-sm border border-slate-100">
                         <div id="target-res" class="mt-2 text-right font-black text-orange-600 font-mono">0원</div>
                     </div>
@@ -57,8 +57,8 @@
         <div class="tool-card relative">
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <div>
-                    <h2 class="text-2xl font-black text-slate-800">📊 Performance Graph</h2>
-                    <p class="text-slate-400 text-sm mt-1">엑셀을 넣고 보고서 톤앤매너에 맞는 색상을 선택하세요.</p>
+                    <h2 class="text-2xl font-black text-slate-800">📊 Performance Analysis</h2>
+                    <p class="text-slate-400 text-sm mt-1">네이버/카카오 보고서를 넣으면 항목을 자동으로 찾아 분석합니다.</p>
                 </div>
                 
                 <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
@@ -72,13 +72,13 @@
             </div>
             
             <div id="drop-zone" class="w-full h-60 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center text-slate-400 hover:border-indigo-300 hover:bg-indigo-50 transition cursor-pointer mb-6">
-                <div class="bg-white shadow-sm p-4 rounded-2xl mb-4 text-3xl">📁</div>
-                <span class="text-lg font-bold text-slate-600">광고 성과 엑셀 파일을 드롭하세요</span>
-                <span class="text-xs text-slate-400 mt-2 font-medium">항목포함: [날짜], [총비용], [구매완료전환매출액]</span>
-                <input type="file" id="file-input" accept=".xlsx, .xls" class="hidden">
+                <div class="bg-white shadow-sm p-4 rounded-2xl mb-4 text-3xl">📂</div>
+                <span class="text-lg font-bold text-slate-600">성과 보고서(CSV/XLSX)를 드롭하세요</span>
+                <span class="text-xs text-slate-400 mt-2 font-medium">자동 탐색 항목: [시간대별/날짜], [총비용], [구매완료 전환매출액]</span>
+                <input type="file" id="file-input" accept=".xlsx, .xls, .csv" class="hidden">
             </div>
 
-            <div id="chart-container" class="h-[500px] hidden">
+            <div id="chart-container" class="h-[550px] hidden">
                 <canvas id="mkt-chart"></canvas>
             </div>
         </div>
@@ -97,47 +97,46 @@
             window.open(url, '_blank');
         }
 
-        // 통합 계산기 로직
         function calcAll() {
             const spend = parseFloat(document.getElementById('roas-spend').value) || 0;
             const rev = parseFloat(document.getElementById('roas-revenue').value) || 0;
             const tRoas = parseFloat(document.getElementById('t-roas').value) || 0;
-            
-            // ROAS 계산
             const res = document.getElementById('roas-res');
             if(spend > 0) {
                 const roas = (rev / spend) * 100;
                 res.innerText = Math.round(roas) + '%';
                 res.className = roas >= 300 ? "text-3xl font-black text-emerald-500 font-mono" : "text-3xl font-black text-rose-500 font-mono";
             } else { res.innerText = '0%'; res.className = "text-3xl font-black text-slate-300 font-mono"; }
-
-            // 목표 매출액 계산
             document.getElementById('target-res').innerText = (spend > 0 && tRoas > 0) ? Math.round(spend * (tRoas/100)).toLocaleString() + '원' : '0원';
         }
 
-        // 그래프 및 테마 로직
         let myChart = null;
         let currentData = null;
         const themes = {
-            indigo: { main: 'rgba(99, 102, 241, 0.5)', line: 'rgb(79, 70, 229)', bg: 'rgba(99, 102, 241, 0.1)' },
-            rose: { main: 'rgba(244, 63, 94, 0.5)', line: 'rgb(225, 29, 72)', bg: 'rgba(244, 63, 94, 0.1)' },
-            emerald: { main: 'rgba(16, 185, 129, 0.5)', line: 'rgb(5, 150, 105)', bg: 'rgba(16, 185, 129, 0.1)' },
-            amber: { main: 'rgba(245, 158, 11, 0.5)', line: 'rgb(217, 119, 6)', bg: 'rgba(245, 158, 11, 0.1)' }
+            indigo: { main: 'rgba(99, 102, 241, 0.5)', line: 'rgb(79, 70, 229)' },
+            rose: { main: 'rgba(244, 63, 94, 0.5)', line: 'rgb(225, 29, 72)' },
+            emerald: { main: 'rgba(16, 185, 129, 0.5)', line: 'rgb(5, 150, 105)' },
+            amber: { main: 'rgba(245, 158, 11, 0.5)', line: 'rgb(217, 119, 6)' }
         };
         let activeTheme = 'indigo';
 
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         dropZone.onclick = () => fileInput.click();
-        dropZone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
         dropZone.ondragover = (e) => e.preventDefault();
+        dropZone.ondrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); };
         fileInput.onchange = (e) => handleFile(e.target.files[0]);
 
         function handleFile(file) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const workbook = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
-                currentData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {raw: false});
+                // 네이버 보고서 특성상 첫 1-2줄이 설명일 수 있으므로 데이터를 유연하게 추출
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                currentData = XLSX.utils.sheet_to_json(sheet, {range: 1}); // 두 번째 줄부터 데이터로 인식 시도
+                if(!currentData[0] || !Object.keys(currentData[0]).some(k => k.includes('총비용'))) {
+                    currentData = XLSX.utils.sheet_to_json(sheet); // 실패 시 첫 줄부터 다시 시도
+                }
                 createChart();
             };
             reader.readAsArrayBuffer(file);
@@ -145,47 +144,55 @@
 
         function createChart() {
             if (!currentData) return;
-            const findKey = (row, target) => Object.keys(row).find(key => key.replace(/\s/g, '').includes(target.replace(/\s/g, '')));
-            const first = currentData[0];
-            const dK = findKey(first, '날짜') || Object.keys(first)[0];
-            const cK = findKey(first, '총비용');
-            const rK = findKey(first, '구매완료전환매출액');
+            const findKey = (target) => Object.keys(currentData[0]).find(key => key.replace(/\s/g, '').includes(target.replace(/\s/g, '')));
+            
+            const labelKey = findKey('시간대별') || findKey('날짜') || Object.keys(currentData[0])[0];
+            const costKey = findKey('총비용');
+            const revenueKey = findKey('구매완료전환매출액');
 
-            if (!cK || !rK) return alert('엑셀 항목을 확인해주세요 (총비용, 구매완료전환매출액 필함)');
+            if (!costKey || !revenueKey) return alert('항목을 찾을 수 없습니다. [총비용], [구매완료 전환매출액] 항목이 필요합니다.');
 
             document.getElementById('chart-container').classList.remove('hidden');
             document.getElementById('drop-zone').classList.add('hidden');
+
+            const labels = currentData.map(r => r[labelKey]);
+            const costs = currentData.map(r => parseFloat(String(r[costKey]).replace(/,/g, '')) || 0);
+            const revenues = currentData.map(r => parseFloat(String(r[revenueKey]).replace(/,/g, '')) || 0);
+            const roasData = costs.map((c, i) => c > 0 ? Math.round((revenues[i] / c) * 100) : 0);
 
             const ctx = document.getElementById('mkt-chart').getContext('2d');
             if (myChart) myChart.destroy();
 
             const theme = themes[activeTheme];
             myChart = new Chart(ctx, {
-                type: 'bar',
                 data: {
-                    labels: currentData.map(r => r[dK]),
+                    labels: labels,
                     datasets: [
-                        { label: '매출액 (Bar)', data: currentData.map(r => parseFloat(String(r[rK]).replace(/,/g, ''))), backgroundColor: theme.main, borderRadius: 12, order: 2 },
-                        { label: '광고비 (Line)', data: currentData.map(r => parseFloat(String(r[cK]).replace(/,/g, ''))), type: 'line', borderColor: theme.line, borderWidth: 4, pointRadius: 4, tension: 0.4, order: 1 }
+                        { label: '매출액 (Bar)', type: 'bar', data: revenues, backgroundColor: theme.main, borderRadius: 8, yAxisID: 'y' },
+                        { label: '광고비 (Line)', type: 'line', data: costs, borderColor: theme.line, borderWidth: 3, pointRadius: 3, tension: 0.4, yAxisID: 'y' },
+                        { label: 'ROAS (%)', type: 'line', data: roasData, borderColor: '#94a3b8', borderDash: [5, 5], borderWidth: 1, pointRadius: 0, fill: false, yAxisID: 'y1' }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } },
-                    scales: { y: { beginAtZero: true, grid: { display: false } } }
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { 
+                        legend: { position: 'top' },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.dataset.label.includes('ROAS') ? ctx.raw + '%' : ctx.raw.toLocaleString() + '원'}` } }
+                    },
+                    scales: { 
+                        y: { type: 'linear', display: true, position: 'left', grid: { display: false }, title: { display: true, text: '금액(원)' } },
+                        y1: { type: 'linear', display: true, position: 'right', grid: { display: false }, title: { display: true, text: 'ROAS(%)' } }
+                    }
                 }
             });
         }
 
-        function changeTheme(color) {
-            activeTheme = color;
-            if (myChart) createChart();
-        }
-
+        function changeTheme(color) { activeTheme = color; if (myChart) createChart(); }
         function downloadChart() {
             const link = document.createElement('a');
             link.href = document.getElementById('mkt-chart').toDataURL('image/png');
-            link.download = `report_${activeTheme}.png`;
+            link.download = `지윤AE_성과보고서_${new Date().toISOString().slice(0,10)}.png`;
             link.click();
         }
     </script>
