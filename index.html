@@ -10,22 +10,22 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
         body { font-family: 'Pretendard', sans-serif; letter-spacing: -0.02em; }
-        .tool-card { @apply bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100 transition-all hover:shadow-md; }
+        .tool-card { @apply bg-white p-12 rounded-[3.5rem] shadow-sm border border-slate-100 transition-all hover:shadow-md; }
         
         /* 계산기 입력창 크기 대폭 확대 */
-        .calc-input { @apply w-full p-6 bg-slate-50 rounded-[1.5rem] outline-none border border-slate-100 font-black text-xl focus:ring-4 focus:ring-indigo-500 transition-all; }
+        .calc-input { @apply w-full p-8 bg-slate-50 rounded-[2rem] outline-none border-2 border-slate-100 font-black text-2xl focus:ring-4 focus:ring-indigo-500 transition-all; }
         
-        /* 컬러 선택기: 확실하게 보이도록 크기와 그림자 강화 */
-        .color-option { @apply w-12 h-12 rounded-full cursor-pointer border-4 border-white shadow-lg transition-all hover:scale-110 active:scale-95; }
-        .color-option.active { @apply ring-4 ring-slate-800 scale-110; }
+        /* 컬러 선택 버튼: 절대 사라지지 않도록 크기와 배경색 강제 지정 */
+        .color-btn { @apply w-14 h-14 rounded-full cursor-pointer border-4 border-white shadow-lg transition-all hover:scale-110 active:scale-95 inline-block; }
+        .color-btn.active { @apply ring-4 ring-slate-800 scale-110; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-900 pb-20">
+<body class="bg-slate-50 min-h-screen text-slate-900 pb-24">
     <div class="max-w-7xl mx-auto p-6 md:p-12">
         
-        <header class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-2 pb-12">
+        <header class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8 border-b-2 pb-12">
             <div>
-                <h1 class="text-6xl font-black text-slate-900 tracking-tighter italic uppercase">Work Less, Earn More</h1>
+                <h1 class="text-7xl font-black text-slate-900 tracking-tighter italic uppercase">Work Less, Earn More</h1>
                 <p class="text-indigo-600 mt-4 font-bold text-2xl">프리미엄 컬러 톤 선택 & 고성능 마케팅 보드</p>
             </div>
         </header>
@@ -36,87 +36,87 @@
                 <div class="flex flex-col md:flex-row gap-6">
                     <input id="search-brand" type="text" placeholder="분석할 키워드를 입력하세요" class="flex-1 p-8 bg-slate-50 rounded-[2rem] outline-none focus:ring-4 focus:ring-indigo-500 font-bold border border-slate-100 text-2xl shadow-inner">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button onclick="monitor('blackkiwi')" class="px-10 py-6 rounded-[2rem] bg-orange-50 text-orange-600 font-black text-lg hover:bg-orange-100 border border-orange-100 shadow-sm">🥝 블랙키위</button>
-                        <button onclick="monitor('blog')" class="px-10 py-6 rounded-[2rem] bg-green-50 text-green-700 font-black text-lg hover:bg-green-100 border border-green-100 shadow-sm">🟢 블로그</button>
-                        <button onclick="monitor('cafe')" class="px-10 py-6 rounded-[2rem] bg-emerald-50 text-emerald-700 font-black text-lg hover:bg-emerald-100 border border-emerald-100 shadow-sm">☕ 카페</button>
-                        <button onclick="monitor('insta')" class="px-10 py-6 rounded-[2rem] bg-pink-50 text-pink-600 font-black text-lg hover:bg-pink-100 border border-pink-100 shadow-sm">📸 인스타</button>
+                        <button onclick="monitor('blackkiwi')" class="px-10 py-6 rounded-[2rem] bg-orange-50 text-orange-600 font-black text-lg">🥝 블랙키위</button>
+                        <button onclick="monitor('blog')" class="px-10 py-6 rounded-[2rem] bg-green-50 text-green-700 font-black text-lg">🟢 블로그</button>
+                        <button onclick="monitor('cafe')" class="px-10 py-6 rounded-[2rem] bg-emerald-50 text-emerald-700 font-black text-lg">☕ 카페</button>
+                        <button onclick="monitor('insta')" class="px-10 py-6 rounded-[2rem] bg-pink-50 text-pink-600 font-black text-lg">📸 인스타</button>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div class="tool-card border-4 border-indigo-50 bg-gradient-to-br from-white to-indigo-50/30">
-                    <h3 class="text-2xl font-black text-indigo-800 mb-8 italic">🎯 ROAS 계산기 (확대)</h3>
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-2 gap-6">
+                    <h3 class="text-3xl font-black text-indigo-800 mb-10 italic">🎯 ROAS 계산기</h3>
+                    <div class="space-y-8">
+                        <div class="grid grid-cols-2 gap-8">
                             <div>
-                                <label class="block text-sm font-bold text-slate-400 mb-2 ml-2">광고 지출액</label>
-                                <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="Cost" class="calc-input">
+                                <label class="block text-sm font-bold text-slate-400 mb-3 ml-2">광고 지출액 (Spent)</label>
+                                <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="0" class="calc-input text-indigo-600">
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-slate-400 mb-2 ml-2">발생 매출액</label>
-                                <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="Sales" class="calc-input">
+                                <label class="block text-sm font-bold text-slate-400 mb-3 ml-2">발생 매출액 (Sales)</label>
+                                <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="0" class="calc-input text-indigo-600">
                             </div>
                         </div>
-                        <div class="pt-6 border-t border-indigo-100">
-                            <div id="res-roas" class="text-center text-8xl font-black text-slate-200 font-mono tracking-tighter">0%</div>
-                            <p class="text-center text-slate-400 mt-2 font-bold uppercase tracking-widest">Return on Ad Spend</p>
+                        <div class="pt-10 border-t-2 border-indigo-100 text-center">
+                            <div id="res-roas" class="text-9xl font-black text-slate-200 font-mono tracking-tighter transition-all">0%</div>
+                            <p class="text-slate-400 mt-4 font-bold uppercase tracking-widest text-lg">Marketing Performance Index</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="tool-card border-4 border-emerald-50 bg-gradient-to-br from-white to-emerald-50/30">
-                    <h3 class="text-2xl font-black text-emerald-800 mb-8 italic">🎯 목표 매출 계산기 (확대)</h3>
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-2 gap-6">
+                    <h3 class="text-3xl font-black text-emerald-800 mb-10 italic">🎯 목표 매출 계산기</h3>
+                    <div class="space-y-8">
+                        <div class="grid grid-cols-2 gap-8">
                             <div>
-                                <label class="block text-sm font-bold text-slate-400 mb-2 ml-2">예상 광고비</label>
-                                <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="Budget" class="calc-input">
+                                <label class="block text-sm font-bold text-slate-400 mb-3 ml-2">예상 광고비 (Budget)</label>
+                                <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="0" class="calc-input text-emerald-600">
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-slate-400 mb-2 ml-2">목표 ROAS (%)</label>
-                                <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="Target %" class="calc-input">
+                                <label class="block text-sm font-bold text-slate-400 mb-3 ml-2">목표 ROAS (%)</label>
+                                <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="Target" class="calc-input text-emerald-600">
                             </div>
                         </div>
-                        <div class="pt-6 border-t border-emerald-100">
-                            <div id="res-target-rev" class="text-right text-5xl font-black text-emerald-600 font-mono">0원</div>
-                            <p class="text-right text-slate-400 mt-2 font-bold uppercase tracking-widest text-sm">Required Revenue to hit target</p>
+                        <div class="pt-10 border-t-2 border-emerald-100 text-right">
+                            <div id="res-target-rev" class="text-6xl font-black text-emerald-600 font-mono">0원</div>
+                            <p class="text-slate-400 mt-4 font-bold uppercase tracking-widest text-sm">Required Revenue to hit target</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="tool-card border-4 border-slate-100">
-                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 mb-16">
+                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-10 mb-16">
                     <div>
-                        <h2 class="text-4xl font-black text-slate-900">📊 성과 시각화 리포트</h2>
-                        <p class="text-slate-400 font-bold text-lg mt-2 italic">원하는 컬러 톤을 선택하고 데이터를 업로드하세요.</p>
+                        <h2 class="text-5xl font-black text-slate-900">📊 성과 시각화 리포트</h2>
+                        <p class="text-slate-400 font-bold text-xl mt-3">원하는 컬러 톤을 선택하고 데이터를 업로드하세요.</p>
                     </div>
                     
-                    <div class="flex items-center gap-10 bg-slate-50 p-6 px-10 rounded-[3rem] border-2 border-slate-100 shadow-inner">
-                        <div class="flex flex-col items-center gap-2">
-                            <span class="text-xs font-black text-slate-400 uppercase tracking-tighter">Theme Select</span>
-                            <div class="flex gap-4">
-                                <div onclick="setChartColor('#4f46e5')" class="color-option bg-indigo-500 active" id="sel-indigo"></div>
-                                <div onclick="setChartColor('#e11d48')" class="color-option bg-rose-500" id="sel-rose"></div>
-                                <div onclick="setChartColor('#10b981')" class="color-option bg-emerald-500" id="sel-emerald"></div>
-                                <div onclick="setChartColor('#f59e0b')" class="color-option bg-amber-500" id="sel-amber"></div>
+                    <div class="flex items-center gap-12 bg-slate-100 p-8 px-12 rounded-[3.5rem] shadow-inner border border-slate-200">
+                        <div class="flex flex-col gap-3">
+                            <span class="text-sm font-black text-slate-500 uppercase tracking-widest">Theme Select</span>
+                            <div class="flex gap-5" id="color-menu-container">
+                                <div onclick="setChartColor('#4f46e5')" class="color-btn bg-[#4f46e5] active" id="sel-indigo"></div>
+                                <div onclick="setChartColor('#e11d48')" class="color-btn bg-[#e11d48]" id="sel-rose"></div>
+                                <div onclick="setChartColor('#10b981')" class="color-btn bg-[#10b981]" id="sel-emerald"></div>
+                                <div onclick="setChartColor('#f59e0b')" class="color-btn bg-[#f59e0b]" id="sel-amber"></div>
                             </div>
                         </div>
-                        <div class="w-px h-12 bg-slate-200"></div>
-                        <button onclick="downloadChart()" class="bg-slate-900 text-white px-10 py-5 rounded-[1.5rem] font-black hover:bg-black transition-all shadow-xl hover:-translate-y-1">PNG 저장</button>
+                        <div class="w-px h-16 bg-slate-300"></div>
+                        <button onclick="downloadChart()" class="bg-slate-900 text-white px-12 py-6 rounded-[2rem] font-black text-lg hover:bg-black transition-all shadow-xl hover:-translate-y-1">PNG 저장</button>
                     </div>
                 </div>
 
-                <div id="drop-zone" class="w-full h-96 border-8 border-dashed border-slate-100 rounded-[5rem] flex flex-col items-center justify-center text-slate-300 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all cursor-pointer group">
-                    <div class="text-center pointer-events-none group-hover:scale-110 transition-transform">
-                        <div class="text-9xl mb-6">📂</div>
+                <div id="drop-zone" class="w-full h-96 border-8 border-dashed border-slate-100 rounded-[5rem] flex flex-col items-center justify-center text-slate-300 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all cursor-pointer">
+                    <div class="text-center pointer-events-none">
+                        <div class="text-[10rem] mb-6">📂</div>
                         <span class="text-3xl font-black text-slate-400">데이터 파일을 올려주세요</span>
                     </div>
                     <input type="file" id="file-input" multiple class="hidden">
                 </div>
 
-                <div id="chart-container" class="h-[700px] hidden">
+                <div id="chart-container" class="h-[750px] hidden">
                     <canvas id="mkt-chart"></canvas>
                 </div>
             </div>
@@ -128,10 +128,9 @@
         let rawDataStore = [];
         let myChart = null;
 
-        // 컬러 톤 변경 시스템
         function setChartColor(hex) {
             activeColor = hex;
-            document.querySelectorAll('.color-option').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.color-btn').forEach(el => el.classList.remove('active'));
             if(hex === '#4f46e5') document.getElementById('sel-indigo').classList.add('active');
             if(hex === '#e11d48') document.getElementById('sel-rose').classList.add('active');
             if(hex === '#10b981') document.getElementById('sel-emerald').classList.add('active');
@@ -178,7 +177,7 @@
                     headerIdx = i; break;
                 }
             }
-            if(headerIdx === -1) return alert("매출 혹은 광고비 데이터 항목을 찾을 수 없습니다.");
+            if(headerIdx === -1) return alert("데이터 항목을 찾을 수 없습니다.");
 
             const headerRow = rawDataStore[headerIdx];
             const idx = {
@@ -216,19 +215,19 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'ROAS (%)', type: 'line', data: roas, borderColor: activeColor, backgroundColor: activeColor, borderWidth: 8, pointRadius: 9, pointBackgroundColor: '#fff', yAxisID: 'y1', order: 1 },
-                        { label: '총비용 (Spend)', type: 'line', data: spends, borderColor: 'rgba(100, 116, 139, 0.4)', borderDash: [10, 5], borderWidth: 4, pointRadius: 0, yAxisID: 'y', order: 2 },
-                        { label: '매출액 (Revenue)', type: 'bar', data: revs, backgroundColor: activeColor + '15', borderRadius: 20, yAxisID: 'y', order: 3 }
+                        { label: 'ROAS (%)', type: 'line', data: roas, borderColor: activeColor, backgroundColor: activeColor, borderWidth: 10, pointRadius: 12, pointBackgroundColor: '#fff', yAxisID: 'y1', order: 1 },
+                        { label: '총비용 (Spend)', type: 'line', data: spends, borderColor: 'rgba(100, 116, 139, 0.4)', borderDash: [12, 6], borderWidth: 5, pointRadius: 0, yAxisID: 'y', order: 2 },
+                        { label: '매출액 (Revenue)', type: 'bar', data: revs, backgroundColor: activeColor + '15', borderRadius: 25, yAxisID: 'y', order: 3 }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: { beginAtZero: true, position: 'left', ticks: { callback: v => v.toLocaleString() + '원' } },
-                        y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: activeColor, font: { weight: 'bold', size: 16 }, callback: v => v + '%' } }
+                        y: { beginAtZero: true, position: 'left', ticks: { font: { weight: 'bold' }, callback: v => v.toLocaleString() + '원' } },
+                        y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: activeColor, font: { weight: '900', size: 20 }, callback: v => v + '%' } }
                     },
-                    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 30, font: { size: 16, weight: 'bold' } } } }
+                    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 40, font: { size: 18, weight: 'bold' } } } }
                 }
             });
         }
