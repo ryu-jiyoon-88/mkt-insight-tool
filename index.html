@@ -8,46 +8,38 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        .tool-card { @apply bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 transition-all hover:shadow-md; }
+        .tool-card { @apply bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100; }
         .tab-btn { @apply px-8 py-4 font-bold text-slate-400 border-b-4 border-transparent transition-all; }
         .tab-btn.active { @apply text-indigo-600 border-indigo-600; }
         .calc-input { @apply w-full p-4 bg-slate-50 rounded-2xl outline-none border border-slate-100 font-bold text-sm focus:ring-2 focus:ring-indigo-500; }
         .stat-label { @apply text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1 block; }
         .stat-value { @apply text-3xl font-black font-mono; }
         
-        /* 테마 선택기 스타일 */
-        .theme-dot { @apply w-8 h-8 rounded-full cursor-pointer border-4 border-white shadow-sm transition-transform hover:scale-110; }
-        .theme-dot.active { @apply ring-2 ring-slate-800 scale-110; }
+        /* 그래프 톤 선택 버튼 전용 */
+        .color-selector { @apply w-6 h-6 rounded-full cursor-pointer border-2 border-white shadow-sm hover:scale-110 transition-transform; }
+        .color-selector.active { @apply ring-2 ring-slate-800; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen font-sans text-slate-900 transition-colors duration-300">
+<body class="bg-slate-50 min-h-screen font-sans text-slate-900">
     <div class="max-w-7xl mx-auto p-6 md:p-10">
-        <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b pb-8">
+        <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-8">
             <div>
                 <h1 class="text-4xl font-black text-slate-800 tracking-tight italic">✨ Work Less, Play More!</h1>
-                <p id="sub-slogan" class="text-slate-500 mt-2 font-bold text-lg text-indigo-600">효율 중심의 '적게 일하고 많이 벌기' 프로젝트</p>
+                <p class="text-slate-500 mt-2 font-bold text-lg text-indigo-600">효율 중심의 '적게 일하고 많이 벌기' 프로젝트</p>
             </div>
-            
-            <div class="flex items-center gap-6">
-                <div class="flex gap-2 bg-white p-2 rounded-full shadow-inner border border-slate-100">
-                    <div onclick="setTheme('indigo')" id="dot-indigo" class="theme-dot bg-indigo-500 active"></div>
-                    <div onclick="setTheme('rose')" id="dot-rose" class="theme-dot bg-rose-500"></div>
-                    <div onclick="setTheme('emerald')" id="dot-emerald" class="theme-dot bg-emerald-500"></div>
-                </div>
-                <div id="clock" class="text-xl font-mono font-bold text-slate-300">00:00:00</div>
-            </div>
+            <div id="clock" class="text-xl font-mono font-bold text-slate-300">00:00:00</div>
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="tool-card border-l-8 border-l-slate-400" id="card-spend">
+            <div class="tool-card border-l-8 border-l-blue-500">
                 <span class="stat-label">Total Spend (광고비)</span>
                 <div id="top-spend" class="stat-value text-slate-800">0원</div>
             </div>
-            <div class="tool-card border-l-8 border-l-indigo-500" id="card-roas">
+            <div class="tool-card border-l-8 border-l-indigo-500">
                 <span class="stat-label">Average ROAS</span>
                 <div id="top-roas" class="stat-value text-indigo-600">0%</div>
             </div>
-            <div class="tool-card border-l-8 border-l-emerald-500" id="card-revenue">
+            <div class="tool-card border-l-8 border-l-emerald-500">
                 <span class="stat-label">Total Revenue (매출액)</span>
                 <div id="top-revenue" class="stat-value text-emerald-600">0원</div>
             </div>
@@ -71,36 +63,45 @@
                     </div>
                 </div>
 
-                <div class="tool-card border-2 border-indigo-50" id="calc-container">
+                <div class="tool-card border-2 border-indigo-50">
                     <h2 class="text-xl font-bold text-slate-800 mb-6 italic text-center">🎯 Quick Calculator</h2>
                     <div class="space-y-6">
                         <div class="p-5 bg-slate-50 rounded-[2rem] border border-slate-100">
-                            <span class="stat-label theme-text">ROAS 계산 (광고비/매출)</span>
+                            <span class="stat-label text-indigo-500">ROAS 계산 (쓴돈/번돈)</span>
                             <div class="grid grid-cols-2 gap-2 mt-2">
                                 <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
                                 <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="매출액" class="calc-input">
                             </div>
                             <div id="res-roas" class="mt-4 text-center text-3xl font-black text-slate-300 font-mono">0%</div>
                         </div>
-                        <div class="p-5 bg-slate-50 rounded-[2rem] border border-slate-100" id="target-calc-bg">
-                            <span class="stat-label theme-text">목표 매출 계산 (광고비/KPI)</span>
+                        <div class="p-5 bg-indigo-50 rounded-[2rem] border border-indigo-100">
+                            <span class="stat-label text-indigo-600">목표 매출 계산 (쓴돈/목표KPI)</span>
                             <div class="grid grid-cols-2 gap-2 mt-2">
                                 <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
                                 <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="목표 ROAS(%)" class="calc-input">
                             </div>
-                            <div id="res-target-rev" class="mt-4 text-right text-xl font-black theme-text font-mono">0원</div>
+                            <div id="res-target-rev" class="mt-4 text-right text-xl font-black text-indigo-600 font-mono">0원</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="tool-card">
+            <div class="tool-card relative">
                 <div class="flex justify-between items-center mb-10">
                     <h2 class="text-2xl font-black">📊 Performance Chart</h2>
-                    <button onclick="downloadChart()" class="theme-bg text-white px-6 py-3 rounded-2xl text-xs font-bold hover:opacity-90 transition-all active:scale-95">차트 PNG 저장</button>
+                    
+                    <div class="flex items-center gap-4 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Export Tone</span>
+                        <div class="flex gap-2">
+                            <div onclick="setChartColor('#4f46e5')" class="color-selector bg-indigo-500 active" id="sel-indigo"></div>
+                            <div onclick="setChartColor('#e11d48')" class="color-selector bg-rose-500" id="sel-rose"></div>
+                            <div onclick="setChartColor('#10b981')" class="color-selector bg-emerald-500" id="sel-emerald"></div>
+                        </div>
+                        <button onclick="downloadChart()" class="bg-slate-800 text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-black transition-all">PNG 저장</button>
+                    </div>
                 </div>
-                <div id="drop-zone" class="w-full h-56 border-2 border-dashed border-slate-200 rounded-[3rem] flex flex-col items-center justify-center text-slate-400 hover:bg-slate-50 transition cursor-pointer group">
-                    <div class="bg-white shadow-md p-5 rounded-3xl mb-4 text-3xl group-hover:scale-110 transition-transform">📁</div>
+
+                <div id="drop-zone" class="w-full h-56 border-2 border-dashed border-slate-200 rounded-[3rem] flex flex-col items-center justify-center text-slate-400 hover:border-indigo-300 hover:bg-indigo-50 transition cursor-pointer">
                     <span class="text-xl font-bold text-slate-600">파일을 드래그하거나 클릭하여 업로드</span>
                     <input type="file" id="file-input" multiple class="hidden">
                 </div>
@@ -115,35 +116,30 @@
                 <div class="flex flex-col md:flex-row justify-between gap-6 mb-8">
                     <div>
                         <h2 class="text-2xl font-black text-slate-800">📁 Data Manager</h2>
-                        <p class="text-sm text-slate-400 mt-1 font-bold italic">매장/제품/날짜별 데이터 자동 분류 및 원가 기반 분석</p>
+                        <p class="text-sm text-slate-400 mt-1 font-bold italic">매장/제품/날짜별 데이터 자동 분류 및 원가 기반 마진 분석</p>
                     </div>
                     <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-3xl border border-slate-100">
-                        <label class="text-xs font-black text-slate-500 uppercase">고정 원가율 설정</label>
+                        <label class="text-xs font-black text-slate-500 uppercase">기존 원가율 설정</label>
                         <div class="flex items-center gap-2">
-                            <input id="global-cost-rate" type="number" value="30" oninput="processData()" class="w-16 p-2 bg-white border rounded-xl font-bold text-center theme-text">
+                            <input id="global-cost-rate" type="number" value="30" oninput="processData()" class="w-16 p-2 bg-white border rounded-xl font-bold text-center text-indigo-600">
                             <span class="font-bold text-slate-400">%</span>
                         </div>
                     </div>
                 </div>
-                
                 <div class="overflow-x-auto rounded-[2rem] border border-slate-100">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 text-slate-500 font-bold border-b">
                             <tr>
-                                <th class="p-5">구분 (날짜/매장/제품)</th>
+                                <th class="p-5">구분</th>
                                 <th class="p-5">매출액</th>
                                 <th class="p-5">광고비</th>
                                 <th class="p-5">ROAS</th>
-                                <th class="p-5 theme-text">자동 원가액</th>
+                                <th class="p-5 text-indigo-500">자동 원가액</th>
                                 <th class="p-5 text-emerald-600">마진액</th>
                                 <th class="p-5 text-emerald-600">마진율</th>
                             </tr>
                         </thead>
-                        <tbody id="data-table-body" class="divide-y divide-slate-50">
-                            <tr>
-                                <td colspan="7" class="p-20 text-center text-slate-300 font-bold italic">파일을 업로드하면 분석 결과가 표시됩니다.</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="data-table-body" class="divide-y divide-slate-50"></tbody>
                     </table>
                 </div>
             </div>
@@ -151,71 +147,49 @@
     </div>
 
     <script>
-        // 1. 테마 설정
-        let currentTheme = 'indigo';
-        const themeConfig = {
-            indigo: { main: '#4f46e5', light: '#eef2ff', text: 'text-indigo-600', bg: 'bg-indigo-600' },
-            rose: { main: '#e11d48', light: '#fff1f2', text: 'text-rose-600', bg: 'bg-rose-600' },
-            emerald: { main: '#10b981', light: '#ecfdf5', text: 'text-emerald-600', bg: 'bg-emerald-600' }
-        };
+        // 기본 변수 및 시계
+        let activeColor = '#4f46e5';
+        let rawDataStore = [];
+        let myChart = null;
 
-        function setTheme(color) {
-            currentTheme = color;
-            const config = themeConfig[color];
-            
-            // UI 업데이트
-            document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
-            document.getElementById(`dot-${color}`).classList.add('active');
-            
-            document.getElementById('sub-slogan').style.color = config.main;
-            document.getElementById('card-roas').style.borderLeftColor = config.main;
-            document.querySelectorAll('.theme-text').forEach(el => el.style.color = config.main);
-            document.querySelectorAll('.theme-bg').forEach(el => el.style.backgroundColor = config.main);
-            document.getElementById('tab-dashboard').style.color = (activeTab === 'dashboard' ? config.main : '#94a3b8');
-            document.getElementById('tab-manager').style.color = (activeTab === 'manager' ? config.main : '#94a3b8');
-            
-            if (myChart) processData(); // 테마 변경 시 차트 재랜더링
-        }
-
-        // 2. 탭 및 시계
-        let activeTab = 'dashboard';
         setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
         function switchTab(tab) {
-            activeTab = tab;
             document.getElementById('content-dashboard').classList.toggle('hidden', tab !== 'dashboard');
             document.getElementById('content-manager').classList.toggle('hidden', tab !== 'manager');
             document.getElementById('tab-dashboard').classList.toggle('active', tab === 'dashboard');
             document.getElementById('tab-manager').classList.toggle('active', tab === 'manager');
-            setTheme(currentTheme); // 탭 전환 시 테마색 유지
         }
 
-        // 3. 계산기 기능
+        // 그래프 컬러 톤만 변경하는 기능
+        function setChartColor(hex) {
+            activeColor = hex;
+            document.querySelectorAll('.color-selector').forEach(el => el.classList.remove('active'));
+            if(hex === '#4f46e5') document.getElementById('sel-indigo').classList.add('active');
+            if(hex === '#e11d48') document.getElementById('sel-rose').classList.add('active');
+            if(hex === '#10b981') document.getElementById('sel-emerald').classList.add('active');
+            
+            if(rawDataStore.length > 0) processData(); // 차트 다시 그리기
+        }
+
         function runCalc() {
             const s1 = parseFloat(document.getElementById('calc-spend-1').value) || 0;
             const r1 = parseFloat(document.getElementById('calc-rev-1').value) || 0;
             const resRoas = document.getElementById('res-roas');
             if(s1 > 0) {
-                const roas = (r1 / s1) * 100;
-                resRoas.innerText = Math.round(roas) + '%';
-                resRoas.style.color = roas >= 300 ? '#10b981' : '#ef4444';
+                const val = (r1 / s1) * 100;
+                resRoas.innerText = Math.round(val) + '%';
+                resRoas.style.color = val >= 300 ? '#10b981' : '#ef4444';
             }
-
             const s2 = parseFloat(document.getElementById('calc-spend-2').value) || 0;
             const tr = parseFloat(document.getElementById('calc-target-roas').value) || 0;
             const resTarget = document.getElementById('res-target-rev');
-            if(s2 > 0 && tr > 0) {
-                resTarget.innerText = Math.round(s2 * (tr/100)).toLocaleString() + '원';
-            }
+            if(s2 > 0 && tr > 0) resTarget.innerText = Math.round(s2 * (tr/100)).toLocaleString() + '원';
         }
 
-        // 4. 데이터 처리
-        let rawDataStore = [];
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
         dropZone.onclick = () => fileInput.click();
-        dropZone.ondragover = (e) => e.preventDefault();
-        dropZone.ondrop = (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); };
         fileInput.onchange = (e) => handleFiles(e.target.files);
 
         function handleFiles(files) {
@@ -260,37 +234,24 @@
                 const s = parseFloat(String(row[idx.spend]).replace(/[^0-9.-]+/g, "")) || 0;
                 if (r === 0 && s === 0) return;
 
-                const roas = s > 0 ? Math.round((r / s) * 100) : 0;
+                totalRev += r; totalSpend += s;
+                labels.push(row[idx.label]); chartRev.push(r); chartRoas.push(s > 0 ? Math.round((r/s)*100) : 0);
+
                 const calculatedCost = r * costRate;
                 const marginVal = r - calculatedCost - s;
-                const marginRate = r > 0 ? (marginVal / r) * 100 : 0;
-
-                totalRev += r; totalSpend += s;
-                labels.push(row[idx.label]); chartRev.push(r); chartRoas.push(roas);
-
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition font-medium";
-                tr.innerHTML = `
-                    <td class="p-5 font-bold text-slate-700">${row[idx.label]}</td>
-                    <td class="p-5 font-mono">${r.toLocaleString()}원</td>
-                    <td class="p-5 font-mono text-slate-400">${s.toLocaleString()}원</td>
-                    <td class="p-5 font-black font-mono ${roas >= 300 ? 'text-emerald-500' : 'text-rose-400'}">${roas}%</td>
-                    <td class="p-5 text-slate-400 font-mono">${Math.round(calculatedCost).toLocaleString()}원</td>
-                    <td class="p-5 font-black text-emerald-600 font-mono">${Math.round(marginVal).toLocaleString()}원</td>
-                    <td class="p-5 font-black text-emerald-600 font-mono">${Math.round(marginRate)}%</td>
-                `;
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `<td class="p-5 font-bold">${row[idx.label]}</td><td class="p-5">${r.toLocaleString()}원</td><td class="p-5">${s.toLocaleString()}원</td><td class="p-5 font-black">${s > 0 ? Math.round((r/s)*100) : 0}%</td><td class="p-5 text-indigo-400">${Math.round(calculatedCost).toLocaleString()}원</td><td class="p-5 font-black text-emerald-600">${Math.round(marginVal).toLocaleString()}원</td><td class="p-5 font-black text-emerald-600">${r > 0 ? Math.round((marginVal/r)*100) : 0}%</td>`;
                 body.appendChild(tr);
             });
 
             document.getElementById('top-spend').innerText = totalSpend.toLocaleString() + '원';
             document.getElementById('top-revenue').innerText = totalRev.toLocaleString() + '원';
             document.getElementById('top-roas').innerText = (totalSpend > 0 ? Math.round((totalRev / totalSpend) * 100) : 0) + '%';
-            document.getElementById('top-roas').style.color = themeConfig[currentTheme].main;
 
             updateChart(labels, chartRev, chartRoas);
         }
 
-        let myChart = null;
         function updateChart(labels, revs, roas) {
             const ctx = document.getElementById('mkt-chart').getContext('2d');
             document.getElementById('chart-container').classList.remove('hidden');
@@ -300,35 +261,26 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'ROAS (%)', type: 'line', data: roas, borderColor: themeConfig[currentTheme].main, borderWidth: 5, yAxisID: 'y1', tension: 0.4 },
-                        { label: '매출액', type: 'bar', data: revs, backgroundColor: 'rgba(148, 163, 184, 0.2)', borderRadius: 12, yAxisID: 'y' }
+                        { label: 'ROAS (%)', type: 'line', data: roas, borderColor: activeColor, borderWidth: 5, yAxisID: 'y1', tension: 0.4 },
+                        { label: '매출액', type: 'bar', data: revs, backgroundColor: 'rgba(148, 163, 184, 0.2)', borderRadius: 10, yAxisID: 'y' }
                     ]
                 },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { 
-                        y: { position: 'left' },
-                        y1: { position: 'right', grid: { display: false }, ticks: { color: themeConfig[currentTheme].main, font: { weight: 'bold' } } }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y1: { position: 'right', ticks: { color: activeColor, font: { weight: 'bold' } } } } }
             });
         }
 
         function monitor(type) {
             const brand = document.getElementById('search-brand').value;
-            if(!brand) return alert('키워드를 입력해 주세요!');
+            if(!brand) return alert('입력해주세요!');
             let url = (type === 'blog') ? `https://search.naver.com/search.naver?where=blog&query=${brand}` : (type === 'cafe') ? `https://search.naver.com/search.naver?where=article&query=${brand}` : (type === 'datalab') ? `https://datalab.naver.com/keyword/trendSearch.naver?keywordGroups[0].groupName=${brand}&keywordGroups[0].keywords[0]=${brand}` : `https://www.instagram.com/explore/tags/${brand.replace(/\s/g, '')}/`; window.open(url, '_blank');
         }
 
         function downloadChart() {
             const link = document.createElement('a');
             link.href = document.getElementById('mkt-chart').toDataURL('image/png');
-            link.download = `Report_${currentTheme}.png`;
+            link.download = `Report_Color.png`;
             link.click();
         }
-
-        // 초기 테마 설정
-        setTheme('indigo');
     </script>
 </body>
 </html>
