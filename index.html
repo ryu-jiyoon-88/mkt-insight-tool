@@ -12,8 +12,9 @@
         body { font-family: 'Pretendard', sans-serif; letter-spacing: -0.02em; }
         .tool-card { @apply bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100 transition-all hover:shadow-md; }
         .calc-input { @apply w-full p-4 bg-slate-50 rounded-2xl outline-none border border-slate-100 font-bold text-sm focus:ring-2 focus:ring-indigo-500; }
-        .color-selector { @apply w-8 h-8 rounded-full cursor-pointer border-4 border-white shadow-sm hover:scale-125 transition-all; }
-        .color-selector.active { @apply ring-2 ring-slate-800 scale-110; }
+        /* 컬러 선택기 스타일 */
+        .color-selector { @apply w-10 h-10 rounded-full cursor-pointer border-4 border-white shadow-sm hover:scale-125 transition-all; }
+        .color-selector.active { @apply ring-4 ring-slate-800 scale-110; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-900 pb-20">
@@ -22,7 +23,7 @@
         <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-10">
             <div>
                 <h1 class="text-5xl font-black text-slate-800 tracking-tighter italic">✨ WORK LESS, EARN MORE</h1>
-                <p class="text-indigo-600 mt-3 font-bold text-xl">4가지 톤 선택형 성과 시각화 모드</p>
+                <p class="text-indigo-600 mt-3 font-bold text-xl">데이터 업로드 후 4가지 톤 선택 가능</p>
             </div>
             <div id="clock" class="text-2xl font-mono font-bold text-slate-300">00:00:00</div>
         </header>
@@ -33,10 +34,10 @@
                 <div class="flex flex-col md:flex-row gap-4">
                     <input id="search-brand" type="text" placeholder="분석할 키워드를 입력하세요" class="flex-1 p-6 bg-slate-50 rounded-[1.5rem] outline-none focus:ring-2 focus:ring-indigo-500 font-bold border border-slate-100 text-xl">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <button onclick="monitor('blackkiwi')" class="px-8 py-5 rounded-[1.5rem] bg-orange-50 text-orange-600 font-black transition hover:bg-orange-100 shadow-sm">🥝 블랙키위</button>
-                        <button onclick="monitor('blog')" class="px-8 py-5 rounded-[1.5rem] bg-green-50 text-green-700 font-bold transition hover:bg-green-100 shadow-sm">🟢 블로그</button>
-                        <button onclick="monitor('cafe')" class="px-8 py-5 rounded-[1.5rem] bg-emerald-50 text-emerald-700 font-bold transition hover:bg-emerald-100 shadow-sm">☕ 카페</button>
-                        <button onclick="monitor('insta')" class="px-8 py-5 rounded-[1.5rem] bg-pink-50 text-pink-600 font-bold transition hover:bg-pink-100 shadow-sm">📸 인스타</button>
+                        <button onclick="monitor('blackkiwi')" class="px-8 py-5 rounded-[1.5rem] bg-orange-50 text-orange-600 font-black transition hover:bg-orange-100 shadow-sm border border-orange-100">🥝 블랙키위</button>
+                        <button onclick="monitor('blog')" class="px-8 py-5 rounded-[1.5rem] bg-green-50 text-green-700 font-bold transition hover:bg-green-100 shadow-sm border border-green-100">🟢 블로그</button>
+                        <button onclick="monitor('cafe')" class="px-8 py-5 rounded-[1.5rem] bg-emerald-50 text-emerald-700 font-bold transition hover:bg-emerald-100 shadow-sm border border-emerald-100">☕ 카페</button>
+                        <button onclick="monitor('insta')" class="px-8 py-5 rounded-[1.5rem] bg-pink-50 text-pink-600 font-bold transition hover:bg-pink-100 shadow-sm border border-pink-100">📸 인스타</button>
                     </div>
                 </div>
             </div>
@@ -64,26 +65,25 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                     <div>
                         <h2 class="text-3xl font-black text-slate-800">📊 성과 시각화 리포트</h2>
-                        <p class="text-slate-400 font-medium mt-1">요일/제품/날짜/성별 등 첫 번째 항목 자동 분석</p>
+                        <p id="label-guide" class="text-slate-400 font-medium mt-1">요일/제품/날짜 등 첫 번째 열을 기준으로 분석합니다.</p>
                     </div>
                     
-                    <div class="flex items-center gap-6 bg-slate-50 px-6 py-4 rounded-[2rem] border border-slate-100">
+                    <div class="flex items-center gap-6 bg-slate-50 px-6 py-4 rounded-[2rem] border border-slate-100 shadow-inner">
                         <div class="flex gap-4">
-                            <div onclick="setChartColor('#4f46e5')" class="color-selector bg-indigo-500 active" title="프로페셔널 인디고" id="sel-indigo"></div>
-                            <div onclick="setChartColor('#e11d48')" class="color-selector bg-rose-500" title="열정적 로즈" id="sel-rose"></div>
-                            <div onclick="setChartColor('#10b981')" class="color-selector bg-emerald-500" title="성장 에메랄드" id="sel-emerald"></div>
-                            <div onclick="setChartColor('#f59e0b')" class="color-selector bg-amber-500" title="하이라이트 앰버" id="sel-amber"></div>
+                            <div onclick="setChartColor('#4f46e5')" class="color-selector bg-indigo-500 active" id="sel-indigo"></div>
+                            <div onclick="setChartColor('#e11d48')" class="color-selector bg-rose-500" id="sel-rose"></div>
+                            <div onclick="setChartColor('#10b981')" class="color-selector bg-emerald-500" id="sel-emerald"></div>
+                            <div onclick="setChartColor('#f59e0b')" class="color-selector bg-amber-500" id="sel-amber"></div>
                         </div>
-                        <div class="w-px h-6 bg-slate-200"></div>
+                        <div class="w-px h-8 bg-slate-200"></div>
                         <button onclick="downloadChart()" class="bg-slate-800 text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-black transition-all">PNG 저장</button>
                     </div>
                 </div>
 
-                <div id="drop-zone" class="w-full h-80 border-4 border-dashed border-slate-100 rounded-[4rem] flex flex-col items-center justify-center text-slate-300 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all cursor-pointer group">
-                    <div class="text-center group-hover:scale-105 transition-transform">
-                        <div class="text-6xl mb-4">📂</div>
-                        <span class="text-2xl font-black text-slate-500">데이터 파일을 업로드하세요</span>
-                        <p class="text-lg mt-3 text-slate-400 font-medium italic">어떤 세로 항목이든 AI가 기준점으로 잡습니다.</p>
+                <div id="drop-zone" class="w-full h-80 border-4 border-dashed border-slate-100 rounded-[4rem] flex flex-col items-center justify-center text-slate-300 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all cursor-pointer">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">📈</div>
+                        <span class="text-2xl font-black text-slate-500">엑셀 파일을 드롭하여 분석 시작</span>
                     </div>
                     <input type="file" id="file-input" multiple class="hidden">
                 </div>
@@ -96,13 +96,13 @@
     </div>
 
     <script>
-        let activeColor = '#4f46e5';
+        let activeColor = '#4f46e5'; // 기본 톤: 인디고
         let rawDataStore = [];
         let myChart = null;
 
         setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
-        // 4가지 컬러 업데이트 로직
+        // [컬럼 톤 변경 함수]
         function setChartColor(hex) {
             activeColor = hex;
             document.querySelectorAll('.color-selector').forEach(el => el.classList.remove('active'));
@@ -110,7 +110,11 @@
             if(hex === '#e11d48') document.getElementById('sel-rose').classList.add('active');
             if(hex === '#10b981') document.getElementById('sel-emerald').classList.add('active');
             if(hex === '#f59e0b') document.getElementById('sel-amber').classList.add('active');
+            
+            // 그래프가 이미 그려져 있다면 즉시 색상 반영
             if(rawDataStore.length > 0) processData();
+            // 계산기 색상도 연동
+            runCalc();
         }
 
         const fileInput = document.getElementById('file-input');
@@ -150,11 +154,11 @@
                     headerIdx = i; break;
                 }
             }
-            if(headerIdx === -1) return alert("매출이나 비용 항목을 찾을 수 없습니다!");
+            if(headerIdx === -1) return alert("데이터 항목을 찾을 수 없습니다.");
 
             const headerRow = rawDataStore[headerIdx];
             const idx = {
-                label: 0, // 첫 번째 열 (요일/제품/날짜/분기 등)
+                label: 0, // 첫 번째 항목 고정 (요일/성별/연령/제품 등)
                 rev: headerRow.findIndex(h => dict.rev.some(k => String(h).includes(k))),
                 spend: headerRow.findIndex(h => dict.spend.some(k => String(h).includes(k)))
             };
@@ -188,20 +192,19 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: '로아스 (ROAS %)', type: 'line', data: roas, borderColor: activeColor, backgroundColor: activeColor, borderWidth: 5, pointRadius: 6, pointBackgroundColor: '#fff', yAxisID: 'y1', zIndex: 10 },
-                        { label: '총비용 (Spend)', type: 'line', data: spends, borderColor: 'rgba(148, 163, 184, 0.4)', borderDash: [8, 4], borderWidth: 2, pointRadius: 0, yAxisID: 'y', zIndex: 5 },
-                        { label: '매출액 (Revenue)', type: 'bar', data: revs, backgroundColor: activeColor + '1A', borderRadius: 15, yAxisID: 'y', zIndex: 1 }
+                        { label: 'ROAS (%)', type: 'line', data: roas, borderColor: activeColor, backgroundColor: activeColor, borderWidth: 6, pointRadius: 7, pointBackgroundColor: '#fff', yAxisID: 'y1', zIndex: 10 },
+                        { label: 'Spend', type: 'line', data: spends, borderColor: 'rgba(148, 163, 184, 0.4)', borderDash: [8, 4], borderWidth: 2, pointRadius: 0, yAxisID: 'y', zIndex: 5 },
+                        { label: 'Revenue', type: 'bar', data: revs, backgroundColor: activeColor + '1A', borderRadius: 15, yAxisID: 'y', zIndex: 1 }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
                     scales: {
                         y: { beginAtZero: true, position: 'left', ticks: { callback: v => v.toLocaleString() + '원' } },
                         y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: activeColor, font: { weight: 'bold' }, callback: v => v + '%' } }
                     },
-                    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 20, font: { size: 14, weight: 'bold' } } } }
+                    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 25, font: { size: 14, weight: 'bold' } } } }
                 }
             });
         }
@@ -213,7 +216,7 @@
             if(s1 > 0) {
                 const val = (r1 / s1) * 100;
                 resRoas.innerText = Math.round(val) + '%';
-                resRoas.style.color = val >= 300 ? activeColor : '#ef4444';
+                resRoas.style.color = activeColor;
             }
             const s2 = parseFloat(document.getElementById('calc-spend-2').value) || 0;
             const tr = parseFloat(document.getElementById('calc-target-roas').value) || 0;
@@ -223,7 +226,7 @@
 
         function monitor(type) {
             const brand = document.getElementById('search-brand').value;
-            if(!brand) return alert('키워드를 입력해 주세요!');
+            if(!brand) return alert('분석할 키워드를 입력해 주세요!');
             let url = "";
             switch(type) {
                 case 'blackkiwi': url = `https://blackkiwi.net/service/keyword-analysis?keyword=${encodeURIComponent(brand)}`; break;
@@ -237,7 +240,7 @@
         function downloadChart() {
             const link = document.createElement('a');
             link.href = document.getElementById('mkt-chart').toDataURL('image/png');
-            link.download = `Performance_Report.png`;
+            link.download = `Marketing_Report.png`;
             link.click();
         }
     </script>
