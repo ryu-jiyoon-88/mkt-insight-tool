@@ -3,23 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AE Marketing Command Center</title>
+    <title>적게 일하고 많이 벌기 프로젝트</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
+        body { font-family: 'Pretendard', sans-serif; }
         .tool-card { @apply bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 transition-all hover:shadow-md; }
         .theme-btn { @apply flex flex-col items-center gap-2 p-3 rounded-2xl border-2 border-transparent transition-all cursor-pointer hover:bg-slate-50; }
         .theme-btn.active { @apply border-slate-900 bg-slate-50; }
         .color-preview { @apply w-12 h-6 rounded-full shadow-inner; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen p-4 md:p-10 font-sans text-slate-900">
+<body class="bg-slate-50 min-h-screen p-4 md:p-10 text-slate-900">
     <div class="max-w-7xl mx-auto">
         <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-8">
             <div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tight italic">🚀 AE Command Center</h1>
-                <p class="text-slate-500 mt-2 font-medium">Performance Strategy Dashboard</p>
+                <h1 class="text-4xl font-black text-slate-800 tracking-tight">💰 적게 일하고 많이 벌기 프로젝트</h1>
+                <p id="quote-display" class="text-indigo-600 mt-2 font-bold italic text-lg animate-pulse">명언을 불러오는 중...</p>
             </div>
             <div id="clock" class="text-xl font-mono font-bold text-slate-300">00:00:00</div>
         </header>
@@ -37,7 +39,7 @@
             </div>
 
             <div class="tool-card">
-                <h2 class="text-xl font-bold text-slate-800 mb-6 italic">💰 실시간 퀵 계산기</h2>
+                <h2 class="text-xl font-bold text-slate-800 mb-6 italic">📊 실시간 퀵 계산기</h2>
                 <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-2">
                         <input id="roas-spend" type="number" oninput="calcAll()" placeholder="광고비" class="p-3 bg-slate-50 rounded-xl outline-none text-sm border border-slate-100 font-bold">
@@ -59,26 +61,26 @@
         <div class="tool-card relative">
             <div class="flex flex-col md:flex-row justify-between items-start mb-10 gap-8">
                 <div>
-                    <h2 class="text-3xl font-black text-slate-800">📊 Performance Analysis</h2>
-                    <p class="text-slate-400 text-sm mt-1 font-medium italic">ROAS를 중심으로 분석된 시간대별 성과 지표입니다.</p>
+                    <h2 class="text-3xl font-black text-slate-800 tracking-tighter">📊 성과 분석 그래프</h2>
+                    <p class="text-slate-400 text-sm mt-1 font-medium italic">ROAS를 중심으로 분석된 데이터 리포트입니다.</p>
                 </div>
                 
                 <div class="flex gap-4 p-4 bg-slate-50 rounded-[2rem] border border-slate-100">
                     <div onclick="changeTheme('indigo', this)" class="theme-btn active">
                         <div class="color-preview bg-indigo-500"></div>
-                        <span class="text-[10px] font-bold text-slate-500">INDIGO</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase">Indigo</span>
                     </div>
                     <div onclick="changeTheme('rose', this)" class="theme-btn">
                         <div class="color-preview bg-rose-500"></div>
-                        <span class="text-[10px] font-bold text-slate-500">ROSE</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase">Rose</span>
                     </div>
                     <div onclick="changeTheme('emerald', this)" class="theme-btn">
                         <div class="color-preview bg-emerald-500"></div>
-                        <span class="text-[10px] font-bold text-slate-500">EMERALD</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase">Emerald</span>
                     </div>
                     <div onclick="changeTheme('amber', this)" class="theme-btn">
                         <div class="color-preview bg-amber-500"></div>
-                        <span class="text-[10px] font-bold text-slate-500">AMBER</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase">Amber</span>
                     </div>
                     <div class="flex flex-col justify-center pl-2">
                         <button onclick="downloadChart()" class="text-xs bg-slate-800 text-white px-5 py-3 rounded-xl font-bold hover:shadow-lg transition-all active:scale-95">PNG 저장</button>
@@ -88,7 +90,7 @@
             
             <div id="drop-zone" class="w-full h-64 border-2 border-dashed border-slate-200 rounded-[3rem] flex flex-col items-center justify-center text-slate-400 hover:border-indigo-300 hover:bg-indigo-50 transition cursor-pointer mb-6 group">
                 <div class="bg-white shadow-md p-5 rounded-3xl mb-4 text-4xl group-hover:scale-110 transition-transform">📁</div>
-                <span class="text-xl font-black text-slate-600 tracking-tight">CSV 또는 XLSX 파일을 여기로 드롭</span>
+                <span class="text-xl font-black text-slate-600 tracking-tight">여기에 보고서 파일을 드롭하세요</span>
                 <span class="text-xs text-slate-400 mt-2 font-bold">[시간대별], [총비용], [구매완료 전환매출액] 필드 기준</span>
                 <input type="file" id="file-input" accept=".xlsx, .xls, .csv" class="hidden">
             </div>
@@ -100,8 +102,37 @@
     </div>
 
     <script>
+        // 1. 명언 리스트 (30개)
+        const quotes = [
+            "성공은 행동하는 사람의 것이다.", "불가능은 소심한 자의 망상일 뿐이다.", "오늘의 노력이 내일의 ROAS를 만든다.",
+            "실패는 성공으로 가는 과정일 뿐이다.", "시작하기 위해 위대해질 필요는 없지만, 위대해지려면 시작해야 한다.",
+            "도전하지 않는 것이 가장 큰 위험이다.", "한계를 정하지 마라. 당신은 생각보다 강력하다.",
+            "긍정적인 생각은 긍정적인 결과를 부른다.", "당신의 열정이 곧 당신의 결정이다.",
+            "승리는 가장 끈기 있는 자에게 돌아간다.", "꿈을 크게 가져라. 깨져도 그 조각이 크다.",
+            "실천 없는 생각은 잡념이고, 생각 없는 실천은 재앙이다.", "어제보다 나은 오늘을 만드는 것은 당신의 태도다.",
+            "기회는 준비된 자에게 찾아온다.", "고통 뒤에 즐거움이 온다. 오늘을 견뎌라.",
+            "인생은 속도가 아니라 방향이다.", "작은 습관이 모여 위대한 성취를 만든다.",
+            "가장 어두운 밤도 결국 아침을 맞이한다.", "행동은 모든 성공의 기본이다.",
+            "나 자신을 믿는 것이 성공의 첫 번째 비결이다.", "어려움 속에 기회가 숨어 있다.",
+            "지금 이 순간이 당신의 인생에서 가장 젊은 날이다.", "목표를 낮추지 말고 노력을 높여라.",
+            "할 수 있다고 믿으면 이미 절반은 온 것이다.", "포기하고 싶을 때, 왜 시작했는지를 생각하라.",
+            "성공은 수천 번의 작은 시도들이 모인 결과다.", "당신이 멈추지 않는다면 얼마나 천천히 가느냐는 중요치 않다.",
+            "미래는 현재 우리가 무엇을 하는가에 달려 있다.", "가장 큰 모험은 당신이 꿈꾸는 삶을 사는 것이다.",
+            "결국 승리하는 사람은 '할 수 있다'고 믿는 사람이다."
+        ];
+
+        // 랜덤 명언 노출 함수
+        function showRandomQuote() {
+            const display = document.getElementById('quote-display');
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            display.innerText = `✨ "${quotes[randomIndex]}"`;
+        }
+
+        // 초기 실행
+        showRandomQuote();
         setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
+        // --- 기존 로직 유지 ---
         function monitor(type) {
             const brand = document.getElementById('search-brand').value;
             if(!brand) return alert('업체명을 입력해주세요!');
@@ -178,7 +209,7 @@
                     responsive: true, maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
                     plugins: { 
-                        legend: { position: 'top', labels: { usePointStyle: true, font: { size: 12, weight: 'bold' } } },
+                        legend: { position: 'top', labels: { usePointStyle: true, font: { weight: 'bold' } } },
                         tooltip: { backgroundColor: 'white', titleColor: '#1e293b', bodyColor: '#1e293b', borderColor: '#e2e8f0', borderWidth: 1, padding: 12, callbacks: { label: (ctx) => ` ${ctx.dataset.label}: ${ctx.dataset.label.includes('ROAS') ? ctx.raw + '%' : ctx.raw.toLocaleString() + '원'}` } }
                     },
                     scales: { 
@@ -199,7 +230,7 @@
         function downloadChart() {
             const link = document.createElement('a');
             link.href = document.getElementById('mkt-chart').toDataURL('image/png');
-            link.download = `Report_${activeTheme}.png`;
+            link.download = `Performance_Report.png`;
             link.click();
         }
     </script>
