@@ -7,89 +7,72 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PptxGenJS/3.11.0/pptxgen.bundle.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
         
-        /* 전체 톤앤매너: 갈색 & 핑크 */
         :root {
             --main-brown: #634832;
             --sub-brown: #8b735b;
             --point-pink: #ff85a1;
-            --bg-soft: #fcfaf8;
+            --bg-bright: #fefdfc; /* 배경을 더 밝게 수정 */
         }
 
         body { 
             font-family: 'Pretendard', sans-serif; 
-            letter-spacing: -0.02em; 
-            background-color: var(--bg-soft);
+            letter-spacing: -0.01em; 
+            background-color: var(--bg-bright);
             color: var(--main-brown);
         }
 
-        .tool-card { @apply p-10 rounded-[2.5rem] shadow-sm border transition-all; background-color: #fff; border-color: #eeebe8; }
-        .calc-input { @apply w-full p-5 rounded-2xl outline-none border-2 font-bold text-lg transition-all; background-color: #f8f6f4; border-color: #eeebe8; color: var(--main-brown); }
-        .calc-input:focus { ring: 4px solid var(--point-pink); border-color: var(--point-pink); }
+        .tool-card { @apply p-10 rounded-[2.5rem] shadow-sm border transition-all; background-color: #fff; border-color: #f1eeeb; }
+        .calc-input { @apply w-full p-5 rounded-2xl outline-none border-2 font-bold text-lg transition-all; background-color: #fffaf7; border-color: #f1eeeb; color: var(--main-brown); }
+        .calc-input:focus { border-color: var(--point-pink); }
         
-        /* 탭 스타일 */
-        .tab-btn { @apply px-8 py-4 font-black text-xl transition-all border-b-4 border-transparent; color: #c4b5a6; }
+        .tab-btn { @apply px-8 py-4 font-black text-xl transition-all border-b-4 border-transparent; color: #d6ccc2; }
         .tab-btn.active { border-color: var(--point-pink); color: var(--point-pink); }
         
-        /* AI 카드 섹션 */
-        .ai-card { @apply p-10 rounded-[2.5rem] shadow-sm border; background-color: #fff; border-color: #eeebe8; }
-        .btn-down { @apply flex-1 py-5 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 text-white; }
+        .ai-card { @apply p-10 rounded-[2.5rem] shadow-sm border; background-color: #fff; border-color: #f1eeeb; }
         
-        .important-pink { color: var(--point-pink); }
+        /* 색상 선택 버튼 스타일 */
+        .color-dot { width: 32px; height: 32px; border-radius: 10px; cursor: pointer; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s; }
+        .color-dot:hover { transform: scale(1.1); }
+        .color-dot.active { ring: 3px solid var(--point-pink); transform: scale(1.1); }
+
         b { color: var(--point-pink); font-weight: 900; }
-        
-        .tone-btn { width: 42px; height: 42px; border-radius: 50%; cursor: pointer; border: 4px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.2s; flex-shrink: 0; }
-        .tone-btn.active { ring: 4px solid var(--point-pink); transform: scale(1.1); }
+        .important-pink { color: var(--point-pink); }
     </style>
 </head>
 <body class="pb-20">
     <div class="max-w-6xl mx-auto p-6 md:p-10">
         
-        <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-stone-200 pb-10">
+        <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-stone-100 pb-10">
             <div>
                 <h1 class="text-5xl font-black tracking-tighter italic uppercase" style="color: var(--main-brown);">Work Less, <span class="important-pink">Earn More</span></h1>
-                <p class="mt-3 font-bold text-xl uppercase italic" style="color: var(--sub-brown);">AI Marketing Workspace</p>
+                <p class="mt-3 font-bold text-xl uppercase italic opacity-70">AI Marketing Workspace</p>
             </div>
             <nav class="flex gap-4">
-                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active font-black">01. DASHBOARD</button>
-                <button onclick="switchTab('ai-strategy')" id="tab-ai" class="tab-btn font-black">02. AI STRATEGY</button>
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active">01. DASHBOARD</button>
+                <button onclick="switchTab('ai-strategy')" id="tab-ai" class="tab-btn">02. AI STRATEGY</button>
             </nav>
         </header>
 
         <div id="view-dashboard" class="space-y-8">
-            <div class="tool-card">
-                <h2 class="text-2xl font-black mb-8 flex items-center gap-2">🔍 실시간 트렌드 체크</h2>
-                <div class="flex flex-col md:flex-row gap-4">
-                    <input id="search-brand" type="text" placeholder="키워드를 적어주세요!" class="flex-1 p-6 rounded-2xl outline-none font-bold border-2 border-stone-100 text-xl bg-stone-50 focus:border-pink-300">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <button onclick="monitor('blackkiwi')" class="py-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">🥝 블랙키위</button>
-                        <button onclick="monitor('naver')" class="py-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">💚 네이버</button>
-                        <button onclick="monitor('youtube')" class="py-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">🔴 유튜브</button>
-                        <button onclick="monitor('insta')" class="py-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">📸 인스타</button>
-                    </div>
-                </div>
-            </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="tool-card border-2 border-pink-50">
+                <div class="tool-card">
                     <h3 class="text-xl font-bold mb-6 italic">🎯 ROAS 계산기</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
                         <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="매출액" class="calc-input">
                     </div>
-                    <div id="res-roas" class="mt-8 text-center text-7xl font-black font-mono opacity-20">0%</div>
+                    <div id="res-roas" class="mt-8 text-center text-7xl font-black font-mono opacity-10">0%</div>
                 </div>
-                <div class="tool-card border-2 border-stone-50">
+                <div class="tool-card">
                     <h3 class="text-xl font-bold mb-6 italic">🎯 목표 매출 계산기</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
                         <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="목표(%)" class="calc-input">
                     </div>
-                    <div id="res-target-rev" class="mt-8 text-right text-4xl font-black font-mono" style="color: var(--sub-brown);">0원</div>
+                    <div id="res-target-rev" class="mt-8 text-right text-4xl font-black font-mono opacity-50">0원</div>
                 </div>
             </div>
 
@@ -97,18 +80,21 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                     <div>
                         <h2 class="text-3xl font-black">📊 다차원 보고서 그래프</h2>
-                        <p class="font-medium mt-1" style="color: var(--sub-brown);">30건 기준 요약, 핑크색 포인트로 확인하세요!</p>
+                        <p class="font-medium mt-1 opacity-60">원하는 <span class="important-pink">색상의 버튼</span>을 눌러 그래프를 변경해보세요!</p>
                     </div>
-                    <div class="flex items-center gap-6 bg-stone-50 p-4 px-6 rounded-3xl border border-stone-100">
-                        <div class="flex items-center gap-2">
-                            <div onclick="setChartColor('#634832')" class="tone-btn active" style="background-color: #634832 !important;"></div>
-                            <div onclick="setChartColor('#ff85a1')" class="tone-btn" style="background-color: #ff85a1 !important;"></div>
-                            <div onclick="setChartColor('#8b735b')" class="tone-btn" style="background-color: #8b735b !important;"></div>
+                    <div class="flex items-center gap-4 bg-stone-50 p-4 px-6 rounded-3xl border border-stone-100">
+                        <span class="text-xs font-black uppercase opacity-40">Graph Color</span>
+                        <div class="flex gap-2">
+                            <div onclick="setChartColor('#7dd3fc', this)" class="color-dot" style="background-color: #7dd3fc;"></div>
+                            <div onclick="setChartColor('#fde047', this)" class="color-dot" style="background-color: #fde047;"></div>
+                            <div onclick="setChartColor('#86efac', this)" class="color-dot" style="background-color: #86efac;"></div>
+                            <div onclick="setChartColor('#d8b4fe', this)" class="color-dot" style="background-color: #d8b4fe;"></div>
+                            <div onclick="setChartColor('#ff85a1', this)" class="color-dot active" style="background-color: #ff85a1;"></div>
                         </div>
-                        <button onclick="downloadChart()" class="bg-stone-800 text-white px-6 py-3 rounded-xl text-sm font-black hover:bg-black transition-all">PNG 저장</button>
                     </div>
                 </div>
-                <div id="drop-zone" onclick="document.getElementById('file-input').click()" class="w-full h-64 border-4 border-dashed border-stone-200 rounded-[3rem] flex flex-col items-center justify-center text-stone-300 hover:border-pink-200 hover:bg-pink-50/30 transition-all cursor-pointer">
+                
+                <div id="drop-zone" onclick="document.getElementById('file-input').click()" class="w-full h-64 border-4 border-dashed border-stone-100 rounded-[3rem] flex flex-col items-center justify-center text-stone-300 hover:border-pink-200 hover:bg-pink-50/20 transition-all cursor-pointer">
                     <span class="text-xl font-black italic">여기를 눌러 파일을 올려주세요 📁</span>
                     <input type="file" id="file-input" multiple class="hidden" onchange="handleFiles(this.files)">
                 </div>
@@ -118,38 +104,29 @@
 
         <div id="view-ai-strategy" class="hidden space-y-8">
             <div class="ai-card">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-stone-100 pb-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-stone-50 pb-10">
                     <div>
                         <h2 class="text-4xl font-black italic uppercase tracking-tighter">AI <span class="important-pink">Strategy</span> Analyst</h2>
-                        <p class="font-bold mt-2 font-mono uppercase" style="color: var(--sub-brown);">여러 파일을 한꺼번에 분석할 수 있어요!</p>
+                        <p class="font-bold mt-2 font-mono uppercase opacity-50">통합 분석 리포트를 생성합니다</p>
                     </div>
-                    <button onclick="document.getElementById('ai-file-input').click()" class="bg-stone-800 hover:bg-black text-white px-10 py-5 rounded-2xl font-black text-lg shadow-lg transition-all">파일 여러개 올리기 ✨</button>
+                    <button onclick="document.getElementById('ai-file-input').click()" class="bg-stone-800 hover:bg-black text-white px-10 py-5 rounded-2xl font-black text-lg transition-all">파일 여러개 올리기 ✨</button>
                     <input type="file" id="ai-file-input" class="hidden" multiple onchange="handleAiAnalysis(this.files)">
                 </div>
-
-                <div id="ai-result-view" class="hidden animate-in fade-in duration-500">
+                <div id="ai-result-view" class="hidden">
                     <div id="file-list-area" class="mb-8 flex flex-wrap gap-2"></div>
-                    <div id="briefing-box" class="p-10 rounded-[2.5rem] border border-stone-100 text-lg leading-relaxed mb-10 bg-stone-50">
-                        </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button onclick="downloadExcel()" class="btn-down bg-stone-700 hover:bg-stone-900">EXCEL DOWNLOAD</button>
-                        <button onclick="downloadPDF()" class="btn-down bg-pink-400 hover:bg-pink-500">PDF BRIEFING</button>
-                        <button onclick="downloadPPT()" class="btn-down bg-stone-400 hover:bg-stone-500">PPT PROPOSAL</button>
-                    </div>
+                    <div id="briefing-box" class="p-10 rounded-[2.5rem] border border-stone-50 text-lg leading-relaxed bg-stone-50/50"></div>
                 </div>
-
-                <div id="ai-empty-view" class="py-32 text-center border-2 border-dashed border-stone-200 rounded-[3rem]">
-                    <p class="text-stone-300 font-black text-2xl italic uppercase tracking-widest">파일을 기다리고 있어요!</p>
+                <div id="ai-empty-view" class="py-32 text-center border-2 border-dashed border-stone-100 rounded-[3rem]">
+                    <p class="text-stone-200 font-black text-2xl italic uppercase tracking-widest">분석할 파일을 올려주세요!</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let activeColor = '#634832';
+        let activeColor = '#ff85a1';
         let rawDataStore = [];
         let myChart = null;
-        let lastAiResult = null;
 
         function switchTab(tab) {
             document.getElementById('view-dashboard').classList.toggle('hidden', tab !== 'dashboard');
@@ -158,11 +135,11 @@
             document.getElementById('tab-ai').classList.toggle('active', tab === 'ai-strategy');
         }
 
-        // --- DASHBOARD FUNCTIONS ---
-        function setChartColor(hex) {
+        function setChartColor(hex, el) {
             activeColor = hex;
+            document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
+            el.classList.add('active');
             if(rawDataStore.length > 0) processData();
-            runCalc();
         }
 
         function handleFiles(files) {
@@ -182,9 +159,7 @@
 
         function processData() {
             if (rawDataStore.length < 2) return;
-            const dict = { rev: ['매출', '수입', '전환금액'], spend: ['광고비', '지출', '비용'] };
             let items = [];
-            // 간단 요약 로직 (A열 이름, B열 매출, C열 비용 가정)
             for(let i = 1; i < Math.min(rawDataStore.length, 31); i++) {
                 const row = rawDataStore[i];
                 if (row[0]) items.push({ label: String(row[0]), rev: parseFloat(row[1]) || 0, spend: parseFloat(row[2]) || 1 });
@@ -201,8 +176,8 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Revenue', type: 'bar', data: revs, backgroundColor: '#ff85a1', borderRadius: 10 },
-                        { label: 'Spend', type: 'line', data: spends, borderColor: activeColor, borderWidth: 3, pointRadius: 0 }
+                        { label: 'Revenue', type: 'bar', data: revs, backgroundColor: activeColor + '80', borderRadius: 8 },
+                        { label: 'Spend', type: 'line', data: spends, borderColor: activeColor, borderWidth: 4, pointRadius: 4, pointBackgroundColor: '#fff' }
                     ]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
@@ -215,73 +190,23 @@
             const resRoas = document.getElementById('res-roas');
             if(s1 > 0) {
                 resRoas.innerText = Math.round((r1 / s1) * 100) + '%';
-                resRoas.style.color = '#ff85a1';
+                resRoas.style.color = 'var(--point-pink)';
                 resRoas.style.opacity = '1';
             }
         }
 
-        function monitor(type) {
-            const brand = document.getElementById('search-brand').value;
-            if(!brand) return alert('키워드를 입력해 주세요!');
-            window.open(`https://search.naver.com/search.naver?query=${encodeURIComponent(brand)}`, '_blank');
-        }
-
-        function downloadChart() {
-            const link = document.createElement('a');
-            link.href = document.getElementById('mkt-chart').toDataURL('image/png');
-            link.download = `Report.png`;
-            link.click();
-        }
-
-        // --- 🌟 AI STRATEGY (갈색 & 핑크 톤업) ---
         async function handleAiAnalysis(files) {
-            const fileListArea = document.getElementById('file-list-area');
-            fileListArea.innerHTML = Array.from(files).map(f => 
-                `<span class="bg-pink-100 text-pink-600 px-4 py-2 rounded-xl text-sm font-bold border border-pink-200">📄 ${f.name}</span>`
+            document.getElementById('file-list-area').innerHTML = Array.from(files).map(f => 
+                `<span class="bg-pink-50 text-pink-500 px-4 py-2 rounded-xl text-sm font-bold border border-pink-100">📄 ${f.name}</span>`
             ).join('');
-
-            lastAiResult = {
-                summary: "통합 분석 결과, 현재 <b>브랜드 인지도가 급상승</b>하고 있습니다.",
-                pros: ["매체 통합 <b>ROAS 250%</b> 달성", "핑크색 포인트 소재의 <b>클릭률(CTR) 1위</b>"],
-                cons: ["주말 시간대 <b>비용 낭비</b>가 발견됨", "랜딩 페이지의 <b>모바일 로딩</b> 지연"],
-                action: "지금 바로 <b>고효율 소재에 예산을 집중</b>하고 주말 비딩을 조정하세요!"
-            };
-
-            displayBriefing(lastAiResult);
-        }
-
-        function displayBriefing(res) {
             document.getElementById('ai-empty-view').classList.add('hidden');
-            const view = document.getElementById('ai-result-view');
-            const box = document.getElementById('briefing-box');
-            view.classList.remove('hidden');
-
-            box.innerHTML = `
-                <div class="mb-8 border-b border-stone-200 pb-6">
-                    <h3 class="text-3xl font-black italic" style="color: var(--main-brown);">Combined <span class="important-pink">Report</span></h3>
-                </div>
-                <div class="space-y-8">
-                    <p class="text-2xl font-bold">${res.summary}</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <p class="font-black mb-4 uppercase" style="color: var(--main-brown);">💖 칭찬해요 (Strengths)</p>
-                            <ul class="list-disc ml-5 space-y-2 text-stone-600">${res.pros.map(p=>`<li>${p}</li>`).join('')}</ul>
-                        </div>
-                        <div>
-                            <p class="font-black mb-4 uppercase" style="color: var(--main-brown);">💡 조심해요 (Weakness)</p>
-                            <ul class="list-disc ml-5 space-y-2 text-stone-600">${res.cons.map(c=>`<li>${c}</li>`).join('')}</ul>
-                        </div>
-                    </div>
-                    <div class="pt-8 border-t border-stone-200">
-                        <p class="text-2xl italic font-black">✨ 추천 액션: ${res.action}</p>
-                    </div>
-                </div>
+            document.getElementById('ai-result-view').classList.remove('hidden');
+            document.getElementById('briefing-box').innerHTML = `
+                <h3 class="text-2xl font-black mb-6 italic" style="color: var(--main-brown);">Combined <span class="important-pink">Report</span></h3>
+                <p class="mb-4">데이터 통합 결과, <b>캠페인 효율이 안정적</b>으로 유지되고 있습니다.</p>
+                <p class="text-xl italic font-black">✨ 추천 액션: 성과가 좋은 <b>상위 키워드에 예산을 15% 증액</b>해보세요!</p>
             `;
         }
-
-        function downloadExcel() { alert('엑셀 다운로드를 시작합니다!'); }
-        function downloadPDF() { alert('PDF 브리핑을 생성합니다!'); }
-        function downloadPPT() { alert('PPT 제안서를 다운로드합니다!'); }
     </script>
 </body>
 </html>
