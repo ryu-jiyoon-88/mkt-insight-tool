@@ -11,7 +11,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
         :root { --main-brown: #634832; --sub-brown: #8b735b; --point-pink: #ff85a1; --bg-soft: #fcfaf8; }
         body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-soft); color: var(--main-brown); }
-        .tool-card { @apply p-10 rounded-[2.5rem] bg-white border border-[#eeebe8] shadow-sm; }
+        .tool-card { @apply p-10 rounded-[2.5rem] bg-white border border-[#eeebe8] shadow-sm transition-all; }
         .calc-input { @apply w-full p-5 rounded-2xl outline-none border-2 font-bold text-lg; background-color: #f8f6f4; border-color: #eeebe8; }
         .tab-btn { @apply px-8 py-4 font-black text-xl transition-all border-b-4 border-transparent; color: #c4b5a6; }
         .tab-btn.active { border-color: var(--point-pink); color: var(--point-pink); }
@@ -34,6 +34,19 @@
         </header>
 
         <div id="view-dashboard" class="space-y-8">
+            <div class="tool-card">
+                <h2 class="text-2xl font-black mb-8 flex items-center gap-2">🔍 실시간 트렌드 체크</h2>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input id="search-brand" type="text" placeholder="키워드를 적어주세요!" class="flex-1 p-6 rounded-2xl outline-none font-bold border-2 border-stone-100 text-xl bg-stone-50 focus:border-pink-300">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <button onclick="monitor('blackkiwi')" class="py-4 px-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">🥝 블랙키위</button>
+                        <button onclick="monitor('naver')" class="py-4 px-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">💚 네이버</button>
+                        <button onclick="monitor('youtube')" class="py-4 px-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">🔴 유튜브</button>
+                        <button onclick="monitor('insta')" class="py-4 px-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">📸 인스타</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="tool-card border-2 border-pink-50">
                     <h3 class="text-xl font-bold mb-6 italic">🎯 ROAS 계산기</h3>
@@ -44,7 +57,7 @@
                     <div id="res-roas" class="mt-8 text-center text-7xl font-black font-mono opacity-20">0%</div>
                 </div>
                 <div class="tool-card">
-                    <h2 class="text-xl font-bold mb-6 italic">📁 데이터 업로드 (Excel)</h2>
+                    <h2 class="text-xl font-bold mb-6 italic">📁 성과 데이터 업로드 (Excel)</h2>
                     <div id="drop-zone" onclick="document.getElementById('file-input').click()" class="w-full h-40 border-4 border-dashed border-stone-100 rounded-[2rem] flex flex-col items-center justify-center text-stone-300 hover:bg-pink-50 cursor-pointer transition-all">
                         <span class="font-black italic">여기를 눌러 파일을 올려주세요</span>
                         <input type="file" id="file-input" class="hidden" onchange="handleFiles(this.files)">
@@ -61,23 +74,17 @@
         <div id="view-ai-strategy" class="hidden space-y-8">
             <div class="tool-card">
                 <h2 class="text-3xl font-black mb-10 border-b pb-6 uppercase">Data-Driven <span style="color:var(--point-pink)">Strategy</span></h2>
-                
                 <div class="strategy-box">
                     <span class="media-label">파워링크</span>
                     <p class="text-xl font-bold italic">"키워드별 <b>CPA 최적화</b> 및 저효율 키워드 필터링"</p>
-                    <p class="mt-2 text-stone-500 text-sm">업로드된 데이터 내 전환값이 없는 키워드의 입찰가를 조정하여 로스를 줄입니다.</p>
                 </div>
-
                 <div class="strategy-box">
                     <span class="media-label">쇼핑검색</span>
                     <p class="text-xl font-bold italic">"고효율 상품군 <b>노출 비중 확대</b>"</p>
-                    <p class="mt-2 text-stone-500 text-sm">ROAS가 높은 품목에 일일 예산을 집중 배치하여 매출 극대화를 노립니다.</p>
                 </div>
-
                 <div class="strategy-box">
                     <span class="media-label">메타</span>
                     <p class="text-xl font-bold italic">"캠페인 <b>빈도 점검</b> 및 타겟 확장"</p>
-                    <p class="mt-2 text-stone-500 text-sm">빈도수가 높은 세트는 신규 소재로 교체하고, 성과가 증명된 타겟의 범위를 넓힙니다.</p>
                 </div>
             </div>
         </div>
@@ -91,6 +98,18 @@
             document.getElementById('view-ai-strategy').classList.toggle('hidden', tab !== 'ai-strategy');
             document.getElementById('tab-dashboard').classList.toggle('active', tab === 'dashboard');
             document.getElementById('tab-ai').classList.toggle('active', tab === 'ai-strategy');
+        }
+
+        // 트렌드 모니터 함수
+        function monitor(type) {
+            const brand = document.getElementById('search-brand').value;
+            if(!brand) return alert('키워드를 입력해 주세요!');
+            let url = "";
+            if(type === 'blackkiwi') url = `https://blackkiwi.net/service/keyword-analysis?keyword=${encodeURIComponent(brand)}`;
+            if(type === 'naver') url = `https://search.naver.com/search.naver?query=${encodeURIComponent(brand)}`;
+            if(type === 'youtube') url = `https://www.youtube.com/results?search_query=${encodeURIComponent(brand)}`;
+            if(type === 'insta') url = `https://www.instagram.com/explore/tags/${encodeURIComponent(brand)}`;
+            window.open(url, '_blank');
         }
 
         function runCalc() {
@@ -118,12 +137,11 @@
 
         function processAndChart(rawData) {
             let labels = [], revs = [], spends = [];
-            // 데이터 추출 (2번째 행부터, 0:날짜/이름, 1:매출, 2:광고비 가정)
             for(let i = 1; i < Math.min(rawData.length, 31); i++) {
                 if(rawData[i][0]) {
                     labels.push(rawData[i][0]);
                     revs.push(parseFloat(rawData[i][1]) || 0);
-                    spends.push(parseFloat(rawData[i][2]) || 0);
+                    spends.push(parseFloat(rawData[i][2]) || 1);
                 }
             }
             updateChart(labels, revs, spends);
@@ -137,15 +155,11 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: '매출액 (Revenue)', type: 'bar', data: revs, backgroundColor: '#ff85a1', borderRadius: 8 },
-                        { label: '광고비 (Spend)', type: 'line', data: spends, borderColor: '#634832', borderWidth: 3, fill: false }
+                        { label: '매출액', type: 'bar', data: revs, backgroundColor: '#ff85a1', borderRadius: 8 },
+                        { label: '광고비', type: 'line', data: spends, borderColor: '#634832', borderWidth: 3, fill: false }
                     ]
                 },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true } }
-                }
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
     </script>
