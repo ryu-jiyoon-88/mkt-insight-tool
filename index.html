@@ -9,30 +9,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
-        :root {
-            --main-brown: #634832;
-            --sub-brown: #8b735b;
-            --point-pink: #ff85a1;
-            --bg-soft: #fcfaf8;
-        }
+        :root { --main-brown: #634832; --sub-brown: #8b735b; --point-pink: #ff85a1; --bg-soft: #fcfaf8; }
         body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-soft); color: var(--main-brown); }
-        .tool-card { @apply p-10 rounded-[2.5rem] bg-white border border-[#eeebe8] shadow-sm transition-all; }
+        .tool-card { @apply p-10 rounded-[2.5rem] bg-white border border-[#eeebe8] shadow-sm; }
+        .calc-input { @apply w-full p-5 rounded-2xl outline-none border-2 font-bold text-lg; background-color: #f8f6f4; border-color: #eeebe8; }
         .tab-btn { @apply px-8 py-4 font-black text-xl transition-all border-b-4 border-transparent; color: #c4b5a6; }
         .tab-btn.active { border-color: var(--point-pink); color: var(--point-pink); }
-        
-        /* 전략 리포트 스타일 */
-        .strategy-section { @apply mb-8 p-8 rounded-3xl border border-stone-100 bg-stone-50/50; }
-        .media-tag { @apply px-3 py-1 rounded-full text-xs font-black bg-stone-200 text-stone-600 mb-4 inline-block; }
-        .logic-list { @apply mt-4 space-y-2 text-[15px] border-l-2 border-pink-200 pl-4; }
+        .strategy-box { @apply p-6 rounded-3xl bg-stone-50 border border-stone-100 mb-6; }
+        .media-label { @apply inline-block px-3 py-1 rounded-lg bg-stone-800 text-white text-[10px] font-bold mb-3; }
         b { color: var(--point-pink); font-weight: 900; }
     </style>
 </head>
 <body class="pb-20">
     <div class="max-w-6xl mx-auto p-6 md:p-10">
-        
         <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between border-b border-stone-200 pb-10">
             <div>
-                <h1 class="text-5xl font-black tracking-tighter italic uppercase">Work Less, <span style="color:var(--point-pink)">Earn More</span></h1>
+                <h1 class="text-5xl font-black tracking-tighter italic uppercase" style="color: var(--main-brown);">Work Less, <span style="color:var(--point-pink)">Earn More</span></h1>
                 <p class="mt-3 font-bold text-xl uppercase italic text-stone-400">AI Marketing Workspace</p>
             </div>
             <nav class="flex gap-4">
@@ -42,57 +34,58 @@
         </header>
 
         <div id="view-dashboard" class="space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="tool-card border-2 border-pink-50">
+                    <h3 class="text-xl font-bold mb-6 italic">🎯 ROAS 계산기</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input id="calc-spend-1" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
+                        <input id="calc-rev-1" type="number" oninput="runCalc()" placeholder="매출액" class="calc-input">
+                    </div>
+                    <div id="res-roas" class="mt-8 text-center text-7xl font-black font-mono opacity-20">0%</div>
+                </div>
+                <div class="tool-card">
+                    <h2 class="text-xl font-bold mb-6 italic">📁 데이터 업로드 (Excel)</h2>
+                    <div id="drop-zone" onclick="document.getElementById('file-input').click()" class="w-full h-40 border-4 border-dashed border-stone-100 rounded-[2rem] flex flex-col items-center justify-center text-stone-300 hover:bg-pink-50 cursor-pointer transition-all">
+                        <span class="font-black italic">여기를 눌러 파일을 올려주세요</span>
+                        <input type="file" id="file-input" class="hidden" onchange="handleFiles(this.files)">
+                    </div>
+                </div>
+            </div>
+
             <div class="tool-card">
-                <h2 class="text-2xl font-black mb-6">📊 성과 요약 그래프</h2>
-                <div id="chart-wrapper" class="h-[400px]"><canvas id="mkt-chart"></canvas></div>
+                <h2 class="text-3xl font-black mb-8">📊 성과 추이 그래프</h2>
+                <div id="chart-wrapper" class="hidden h-[500px]"><canvas id="mkt-chart"></canvas></div>
             </div>
         </div>
 
         <div id="view-ai-strategy" class="hidden space-y-8">
             <div class="tool-card">
-                <div class="flex justify-between items-center mb-10 border-b pb-8">
-                    <h2 class="text-3xl font-black uppercase">Data-Driven <span style="color:var(--point-pink)">Strategy</span></h2>
-                    <button onclick="document.getElementById('ai-file-input').click()" class="bg-stone-800 text-white px-8 py-4 rounded-2xl font-black hover:bg-black transition-all">파일 분석 실행</button>
-                    <input type="file" id="ai-file-input" class="hidden" multiple onchange="handleAiAnalysis(this.files)">
+                <h2 class="text-3xl font-black mb-10 border-b pb-6 uppercase">Data-Driven <span style="color:var(--point-pink)">Strategy</span></h2>
+                
+                <div class="strategy-box">
+                    <span class="media-label">파워링크</span>
+                    <p class="text-xl font-bold italic">"키워드별 <b>CPA 최적화</b> 및 저효율 키워드 필터링"</p>
+                    <p class="mt-2 text-stone-500 text-sm">업로드된 데이터 내 전환값이 없는 키워드의 입찰가를 조정하여 로스를 줄입니다.</p>
                 </div>
 
-                <div id="ai-result-view" class="hidden">
-                    <div class="strategy-section">
-                        <span class="media-tag">NAVER 파워링크</span>
-                        <h3 class="text-2xl font-black italic">"직전 기간 대비 전환 단가(CPA) 기반 <span style="color:var(--point-pink)">입찰가 최적화</span>"</h3>
-                        <div class="logic-list">
-                            <p>• 보고서 내 고효율 키워드 그룹의 <b>순위 이탈 여부</b>를 전수 점검</p>
-                            <p>• 저효율 키워드의 불필요한 노출을 제한하여 <b>예산 낭비 차단</b></p>
-                        </div>
-                    </div>
-
-                    <div class="strategy-section">
-                        <span class="media-tag">NAVER 쇼핑검색</span>
-                        <h3 class="text-2xl font-black italic">"ROAS 데이터 기반 <span style="color:var(--point-pink)">상품별 예산 재배분</span>"</h3>
-                        <div class="logic-list">
-                            <p>• 첨부 데이터상 <b>ROAS 1순위 상품</b>에 일일 허용 예산 집중 배정</p>
-                            <p>• 클릭률(CTR) 대비 전환이 낮은 품목의 <b>제외 키워드</b> 설정 강화</p>
-                        </div>
-                    </div>
-
-                    <div class="strategy-section">
-                        <span class="media-tag">META (FB/IG)</span>
-                        <h3 class="text-2xl font-black italic">"빈도수 조절 및 <span style="color:var(--point-pink)">성과 우수 세트</span> 확장"</h3>
-                        <div class="logic-list">
-                            <p>• 광고 빈도(Frequency) 상승에 따른 <b>피로도 구간</b>을 데이터로 식별</p>
-                            <p>• 머신러닝 최적화가 완료된 <b>고성과 타겟</b>의 모수 확장 전략 수립</p>
-                        </div>
-                    </div>
+                <div class="strategy-box">
+                    <span class="media-label">쇼핑검색</span>
+                    <p class="text-xl font-bold italic">"고효율 상품군 <b>노출 비중 확대</b>"</p>
+                    <p class="mt-2 text-stone-500 text-sm">ROAS가 높은 품목에 일일 예산을 집중 배치하여 매출 극대화를 노립니다.</p>
                 </div>
 
-                <div id="ai-empty-view" class="py-32 text-center border-2 border-dashed border-stone-200 rounded-[3rem]">
-                    <p class="text-stone-300 font-black text-xl uppercase">파일을 분석하면 매체별 전략이 노출됩니다.</p>
+                <div class="strategy-box">
+                    <span class="media-label">메타</span>
+                    <p class="text-xl font-bold italic">"캠페인 <b>빈도 점검</b> 및 타겟 확장"</p>
+                    <p class="mt-2 text-stone-500 text-sm">빈도수가 높은 세트는 신규 소재로 교체하고, 성과가 증명된 타겟의 범위를 넓힙니다.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        let myChart = null;
+
         function switchTab(tab) {
             document.getElementById('view-dashboard').classList.toggle('hidden', tab !== 'dashboard');
             document.getElementById('view-ai-strategy').classList.toggle('hidden', tab !== 'ai-strategy');
@@ -100,15 +93,61 @@
             document.getElementById('tab-ai').classList.toggle('active', tab === 'ai-strategy');
         }
 
-        function handleAiAnalysis(files) {
-            if (files.length === 0) return;
-            // 분석 중 로딩 느낌을 위해 0.5초 후 표시
-            document.getElementById('ai-empty-view').classList.add('hidden');
-            document.getElementById('ai-result-view').classList.remove('hidden');
-            console.log("분석 대상 파일:", files);
+        function runCalc() {
+            const s1 = parseFloat(document.getElementById('calc-spend-1').value) || 0;
+            const r1 = parseFloat(document.getElementById('calc-rev-1').value) || 0;
+            const resRoas = document.getElementById('res-roas');
+            if(s1 > 0) {
+                resRoas.innerText = Math.round((r1 / s1) * 100) + '%';
+                resRoas.style.color = '#ff85a1';
+                resRoas.style.opacity = '1';
+            }
         }
 
-        // 기존 그래프 및 계산기 로직 유지...
+        function handleFiles(files) {
+            if (!files[0]) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const wb = XLSX.read(data, {type: 'array'});
+                const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header: 1});
+                processAndChart(json);
+            };
+            reader.readAsArrayBuffer(files[0]);
+        }
+
+        function processAndChart(rawData) {
+            let labels = [], revs = [], spends = [];
+            // 데이터 추출 (2번째 행부터, 0:날짜/이름, 1:매출, 2:광고비 가정)
+            for(let i = 1; i < Math.min(rawData.length, 31); i++) {
+                if(rawData[i][0]) {
+                    labels.push(rawData[i][0]);
+                    revs.push(parseFloat(rawData[i][1]) || 0);
+                    spends.push(parseFloat(rawData[i][2]) || 0);
+                }
+            }
+            updateChart(labels, revs, spends);
+        }
+
+        function updateChart(labels, revs, spends) {
+            document.getElementById('chart-wrapper').classList.remove('hidden');
+            const ctx = document.getElementById('mkt-chart').getContext('2d');
+            if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: '매출액 (Revenue)', type: 'bar', data: revs, backgroundColor: '#ff85a1', borderRadius: 8 },
+                        { label: '광고비 (Spend)', type: 'line', data: spends, borderColor: '#634832', borderWidth: 3, fill: false }
+                    ]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
     </script>
 </body>
 </html>
