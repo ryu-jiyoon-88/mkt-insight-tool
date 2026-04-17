@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketing Performance Hub - Premium</title>
+    <title>Marketing Performance Hub - Premium v7.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -13,7 +13,7 @@
             --main-brown: #634832;
             --sub-brown: #8b735b;
             --point-pink: #ff85a1;
-            --bg-soft: #fcfaf8;
+            --bg-soft: #ffffff; 
         }
         body { font-family: 'Pretendard', sans-serif; letter-spacing: -0.02em; background-color: var(--bg-soft); color: var(--main-brown); }
         .tool-card { @apply p-10 rounded-[2.5rem] shadow-sm border transition-all; background-color: #fff; border-color: #eeebe8; }
@@ -22,12 +22,14 @@
         .tab-btn { @apply px-8 py-4 font-black text-xl transition-all border-b-4 border-transparent; color: #c4b5a6; }
         .tab-btn.active { border-color: var(--point-pink); color: var(--point-pink); }
         .important-pink { color: var(--point-pink); }
-        b { color: var(--point-pink); font-weight: 900; }
         
         .strategy-claim { @apply text-2xl font-black mb-4 leading-tight; }
         .logic-box { @apply p-6 rounded-3xl bg-stone-50 border border-stone-100 mt-4 space-y-3 text-[15px]; }
         .logic-bullet { @apply mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0 bg-pink-400; }
         .stat-badge { @apply px-3 py-1 rounded-full text-[10px] font-black bg-pink-50 text-pink-500 mb-3 inline-block uppercase; }
+
+        .color-dot { width: 28px; height: 28px; border-radius: 50%; border: 3px solid #fff; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .color-dot.active { transform: scale(1.25); ring: 2px solid #e2e8f0; }
     </style>
 </head>
 <body class="pb-20">
@@ -49,9 +51,11 @@
                 <h2 class="text-2xl font-black mb-8 flex items-center gap-2">🔍 실시간 트렌드 체크</h2>
                 <div class="flex flex-col md:flex-row gap-4">
                     <input id="search-brand" type="text" placeholder="키워드를 적어주세요!" class="flex-1 p-6 rounded-2xl outline-none font-bold border-2 border-stone-100 text-xl bg-stone-50 focus:border-pink-300">
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="monitor('naver')" class="px-8 py-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">네이버</button>
-                        <button onclick="monitor('black')" class="px-8 py-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">블랙키위</button>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <button onclick="monitor('blackkiwi')" class="py-4 px-6 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition text-sm">🥝 블랙키위</button>
+                        <button onclick="monitor('naver')" class="py-4 px-6 rounded-2xl bg-stone-100 font-black hover:bg-green-100 hover:text-green-600 transition text-sm">💚 네이버</button>
+                        <button onclick="monitor('insta')" class="py-4 px-6 rounded-2xl bg-stone-100 font-black hover:bg-purple-100 hover:text-purple-600 transition text-sm">📸 인스타</button>
+                        <button onclick="monitor('youtube')" class="py-4 px-6 rounded-2xl bg-stone-100 font-black hover:bg-red-100 hover:text-red-600 transition text-sm">🔴 유튜브</button>
                     </div>
                 </div>
             </div>
@@ -78,9 +82,16 @@
             <div class="tool-card">
                 <div class="flex justify-between items-center mb-12">
                     <h2 class="text-3xl font-black">📊 다차원 보고서 그래프</h2>
-                    <div class="flex gap-2">
-                        <button onclick="document.getElementById('file-input').click()" class="bg-stone-800 text-white px-6 py-3 rounded-xl text-sm font-black">엑셀 업로드</button>
-                        <button onclick="saveImage()" class="bg-pink-400 text-white px-6 py-3 rounded-xl text-sm font-black">PNG 저장</button>
+                    <div class="flex gap-4 items-center">
+                        <div class="flex items-center gap-2.5 bg-stone-50 p-2.5 rounded-full border border-stone-100">
+                            <div onclick="setChartColor('#ff85a1', this)" class="color-dot active" style="background-color: #ff85a1;"></div>
+                            <div onclick="setChartColor('#10b981', this)" class="color-dot" style="background-color: #10b981;"></div>
+                            <div onclick="setChartColor('#6366f1', this)" class="color-dot" style="background-color: #6366f1;"></div>
+                            <div onclick="setChartColor('#f59e0b', this)" class="color-dot" style="background-color: #f59e0b;"></div>
+                            <div onclick="setChartColor('#634832', this)" class="color-dot" style="background-color: #634832;"></div>
+                        </div>
+                        <button onclick="document.getElementById('file-input').click()" class="bg-stone-800 text-white px-6 py-3 rounded-xl text-sm font-black hover:bg-black">엑셀 업로드</button>
+                        <button onclick="saveImage()" class="bg-pink-400 text-white px-6 py-3 rounded-xl text-sm font-black hover:bg-pink-500">PNG 저장</button>
                     </div>
                     <input type="file" id="file-input" class="hidden" onchange="handleFiles(this.files)">
                 </div>
@@ -92,9 +103,8 @@
             <div class="tool-card">
                 <div class="flex justify-between items-center mb-10 border-b pb-10">
                     <h2 class="text-4xl font-black italic uppercase">AI <span class="important-pink">Strategy</span></h2>
-                    <button onclick="handleAiAnalysis()" class="bg-stone-800 text-white px-10 py-5 rounded-2xl font-black">분석 시뮬레이션 ✨</button>
+                    <button onclick="handleAiAnalysis()" class="bg-stone-800 text-white px-10 py-5 rounded-2xl font-black hover:bg-black transition">분석 시뮬레이션 ✨</button>
                 </div>
-
                 <div id="ai-result-view" class="hidden space-y-12">
                     <div class="p-10 rounded-[2.5rem] bg-stone-900 text-white text-center shadow-xl">
                         <p class="text-pink-400 font-black text-xs mb-3 tracking-widest">EXECUTIVE SUMMARY</p>
@@ -111,7 +121,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="ai-empty-view" class="py-32 text-center border-2 border-dashed border-stone-200 rounded-[3rem]">
                     <p class="text-stone-300 font-black text-2xl italic uppercase">데이터를 분석할 준비가 되었습니다!</p>
                 </div>
@@ -121,6 +130,8 @@
 
     <script>
         let myChart = null;
+        let chartData = null;
+        let curColor = '#ff85a1';
 
         function switchTab(tab) {
             document.getElementById('view-dashboard').classList.toggle('hidden', tab !== 'dashboard');
@@ -139,7 +150,6 @@
                 resRoas.style.color = '#ff85a1';
                 resRoas.style.opacity = '1';
             }
-
             const s2 = parseFloat(document.getElementById('calc-spend-2').value) || 0;
             const tRoas = parseFloat(document.getElementById('calc-target-roas').value) || 0;
             if(s2 > 0) {
@@ -149,36 +159,42 @@
 
         function monitor(type) {
             const b = document.getElementById('search-brand').value;
-            if(!b) return alert('키워드 입력!');
-            const url = type === 'naver' ? `https://search.naver.com/search.naver?query=${b}` : `https://blackkiwi.net/service/check-keyword?keyword=${b}`;
-            window.open(url);
+            if(!b) return alert('키워드를 입력해주세요!');
+            const urls = {
+                blackkiwi: `https://blackkiwi.net/service/check-keyword?keyword=${encodeURIComponent(b)}`,
+                naver: `https://search.naver.com/search.naver?query=${encodeURIComponent(b)}`,
+                insta: `https://www.instagram.com/explore/tags/${encodeURIComponent(b)}/`,
+                youtube: `https://www.youtube.com/results?search_query=${encodeURIComponent(b)}`
+            };
+            window.open(urls[type]);
         }
 
-        // --- 핵심: 데이터 파싱 및 그래프 생성 로직 ---
+        function setChartColor(hex, el) {
+            curColor = hex;
+            document.querySelectorAll('.color-dot').forEach(x => x.classList.remove('active'));
+            el.classList.add('active');
+            if(chartData) updateChart(chartData);
+        }
+
         function handleFiles(files) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, {type: 'array'});
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(sheet, {header: 1});
+                const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1});
                 
-                if(rows.length < 2) return alert('데이터가 부족합니다.');
-
                 const head = rows[0];
                 let idx = { label: 0, rev: -1, cost: -1, roas: -1 };
-
                 head.forEach((h, i) => {
                     const t = String(h).replace(/\s/g, '');
                     if(t.includes('매출') || t.includes('수익')) idx.rev = i;
-                    else if(t.includes('비용') || t.includes('광고비') || t.includes('지출')) idx.cost = i;
+                    else if(t.includes('비용') || t.includes('광고비')) idx.cost = i;
                     else if(t.includes('로아스') || t.includes('ROAS')) idx.roas = i;
                     else if(t.includes('날짜') || t.includes('시간')) idx.label = i;
                 });
 
                 const clean = (v) => parseFloat(String(v || 0).replace(/[^0-9.-]+/g, ""));
                 const d = { labels: [], rev: [], cost: [], roas: [] };
-
                 for(let i=1; i<rows.length; i++) {
                     if(!rows[i][idx.label] && !rows[i][idx.rev]) continue;
                     d.labels.push(rows[i][idx.label] || `${i}행`);
@@ -186,6 +202,7 @@
                     d.cost.push(clean(rows[i][idx.cost]));
                     d.roas.push(clean(rows[i][idx.roas]));
                 }
+                chartData = d;
                 updateChart(d);
             };
             reader.readAsArrayBuffer(files[0]);
@@ -194,21 +211,20 @@
         function updateChart(d) {
             const ctx = document.getElementById('mkt-chart').getContext('2d');
             if(myChart) myChart.destroy();
-            
             myChart = new Chart(ctx, {
                 data: {
                     labels: d.labels,
                     datasets: [
-                        { type: 'line', label: 'ROAS (%)', data: d.roas, borderColor: '#ff85a1', backgroundColor: '#ff85a1', borderWidth: 4, yAxisID: 'y2', zIndex: 10, tension: 0.3 },
-                        { type: 'bar', label: '매출액', data: d.rev, backgroundColor: '#ff85a133', borderRadius: 10, yAxisID: 'y1' },
-                        { type: 'line', label: '광고비', data: d.cost, borderColor: '#634832', borderDash: [5,5], borderWidth: 1, fill: false, yAxisID: 'y1' }
+                        { type: 'line', label: 'ROAS (%)', data: d.roas, borderColor: curColor, backgroundColor: curColor, borderWidth: 4, pointBackgroundColor: '#fff', pointBorderWidth: 3, pointRadius: 6, yAxisID: 'y2', zIndex: 10, tension: 0.15 },
+                        { type: 'bar', label: '매출액', data: d.rev, backgroundColor: curColor + '33', borderRadius: 8, yAxisID: 'y1', zIndex: 2 },
+                        { type: 'line', label: '광고비', data: d.cost, borderColor: '#d1d5db', borderDash: [6, 6], borderWidth: 2, pointRadius: 0, fill: false, yAxisID: 'y1', zIndex: 1, tension: 0.4 }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
-                        y1: { type: 'linear', position: 'left', grid: { color: '#f0f0f0' } },
-                        y2: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#ff85a1', font: { weight: 'bold' } } }
+                        y1: { type: 'linear', position: 'left', grid: { color: '#f8f9fa' } },
+                        y2: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: curColor, font: { weight: 'bold' } } }
                     },
                     plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, font: { weight: 'bold' } } } }
                 }
@@ -221,8 +237,9 @@
         }
 
         function saveImage() {
+            if(!myChart) return alert('그래프를 생성해주세요!');
             const link = document.createElement('a');
-            link.download = 'Performance_Report.png';
+            link.download = `Report_${new Date().getTime()}.png`;
             link.href = document.getElementById('mkt-chart').toDataURL('image/png');
             link.click();
         }
