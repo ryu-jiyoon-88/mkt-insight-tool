@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketing Performance Hub</title>
+    <title>Marketing Performance Hub - Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PptxGenJS/3.11.0/pptxgen.bundle.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
         :root {
@@ -26,7 +24,6 @@
         .important-pink { color: var(--point-pink); }
         b { color: var(--point-pink); font-weight: 900; }
         
-        /* 전략 리포트 전용 스타일 */
         .strategy-claim { @apply text-2xl font-black mb-4 leading-tight; }
         .logic-box { @apply p-6 rounded-3xl bg-stone-50 border border-stone-100 mt-4 space-y-3 text-[15px]; }
         .logic-bullet { @apply mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0 bg-pink-400; }
@@ -52,8 +49,9 @@
                 <h2 class="text-2xl font-black mb-8 flex items-center gap-2">🔍 실시간 트렌드 체크</h2>
                 <div class="flex flex-col md:flex-row gap-4">
                     <input id="search-brand" type="text" placeholder="키워드를 적어주세요!" class="flex-1 p-6 rounded-2xl outline-none font-bold border-2 border-stone-100 text-xl bg-stone-50 focus:border-pink-300">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <button onclick="monitor()" class="py-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">🔍 검색하기</button>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="monitor('naver')" class="px-8 py-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">네이버</button>
+                        <button onclick="monitor('black')" class="px-8 py-4 rounded-2xl bg-stone-100 font-black hover:bg-pink-100 hover:text-pink-500 transition">블랙키위</button>
                     </div>
                 </div>
             </div>
@@ -70,7 +68,7 @@
                 <div class="tool-card border-2 border-stone-50">
                     <h3 class="text-xl font-bold mb-6 italic">🎯 목표 매출 계산기</h3>
                     <div class="grid grid-cols-2 gap-4">
-                        <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="광고비" class="calc-input">
+                        <input id="calc-spend-2" type="number" oninput="runCalc()" placeholder="예산" class="calc-input">
                         <input id="calc-target-roas" type="number" oninput="runCalc()" placeholder="목표(%)" class="calc-input">
                     </div>
                     <div id="res-target-rev" class="mt-8 text-right text-4xl font-black font-mono" style="color: var(--sub-brown);">0원</div>
@@ -80,10 +78,13 @@
             <div class="tool-card">
                 <div class="flex justify-between items-center mb-12">
                     <h2 class="text-3xl font-black">📊 다차원 보고서 그래프</h2>
-                    <button onclick="document.getElementById('file-input').click()" class="bg-stone-800 text-white px-6 py-3 rounded-xl text-sm font-black">파일 업로드</button>
+                    <div class="flex gap-2">
+                        <button onclick="document.getElementById('file-input').click()" class="bg-stone-800 text-white px-6 py-3 rounded-xl text-sm font-black">엑셀 업로드</button>
+                        <button onclick="saveImage()" class="bg-pink-400 text-white px-6 py-3 rounded-xl text-sm font-black">PNG 저장</button>
+                    </div>
                     <input type="file" id="file-input" class="hidden" onchange="handleFiles(this.files)">
                 </div>
-                <div id="chart-wrapper" class="h-[400px]"><canvas id="mkt-chart"></canvas></div>
+                <div id="chart-wrapper" class="h-[500px]"><canvas id="mkt-chart"></canvas></div>
             </div>
         </div>
 
@@ -91,45 +92,36 @@
             <div class="tool-card">
                 <div class="flex justify-between items-center mb-10 border-b pb-10">
                     <h2 class="text-4xl font-black italic uppercase">AI <span class="important-pink">Strategy</span></h2>
-                    <button onclick="document.getElementById('ai-file-input').click()" class="bg-stone-800 text-white px-10 py-5 rounded-2xl font-black">데이터 분석 시작 ✨</button>
-                    <input type="file" id="ai-file-input" class="hidden" multiple onchange="handleAiAnalysis(this.files)">
+                    <button onclick="handleAiAnalysis()" class="bg-stone-800 text-white px-10 py-5 rounded-2xl font-black">분석 시뮬레이션 ✨</button>
                 </div>
 
                 <div id="ai-result-view" class="hidden space-y-12">
                     <div class="p-10 rounded-[2.5rem] bg-stone-900 text-white text-center shadow-xl">
                         <p class="text-pink-400 font-black text-xs mb-3 tracking-widest">EXECUTIVE SUMMARY</p>
-                        <h2 class="text-2xl font-bold">"검증된 매체의 <span class="important-pink">집중 투자</span>를 통해 매출 규모를 확장하십시오."</h2>
+                        <h2 class="text-2xl font-bold">"데이터 기반: 고효율 매체 <span class="important-pink">집중 투자</span> 전략 제안"</h2>
                     </div>
-
                     <div id="strategy-items" class="space-y-8">
                         <div class="p-8 rounded-[2rem] border border-stone-100 bg-stone-50/50">
-                            <span class="stat-badge">Search Ads</span>
-                            <h3 class="strategy-claim">"상위 노출 사수를 위해 <span class="important-pink">예산 15% 증액</span>을 강력 제안합니다."</h3>
+                            <span class="stat-badge">Performance</span>
+                            <h3 class="strategy-claim">"현재 ROAS 추세 기준, <span class="important-pink">예산 재배분</span>이 필요합니다."</h3>
                             <div class="logic-box">
-                                <div class="flex gap-3"><div class="logic-bullet"></div><p><b>근거:</b> 전환율(CVR)이 타 매체 대비 20% 우수하여 증액 시 즉각적 매출 상승이 확실함</p></div>
-                                <div class="flex gap-3"><div class="logic-bullet"></div><p><b>효과:</b> 메인 키워드 점유율 확대를 통해 브랜드 신뢰도와 유입량을 동시 확보</p></div>
-                            </div>
-                        </div>
-                        <div class="p-8 rounded-[2rem] border border-stone-100 bg-stone-50/50">
-                            <span class="stat-badge">Display Ads</span>
-                            <h3 class="strategy-claim">"고효율 핑크톤 소재의 <span class="important-pink">노출 비중을 70%로 확대</span>하십시오."</h3>
-                            <div class="logic-box">
-                                <div class="flex gap-3"><div class="logic-bullet"></div><p><b>근거:</b> 최근 2주 테스트 결과, 해당 소재가 평균 클릭률(CTR) 1.8배를 달성함</p></div>
-                                <div class="flex gap-3"><div class="logic-bullet"></div><p><b>효과:</b> 낮은 클릭당 단가(CPC)를 유지하며 잠재 고객 유입 극대화</p></div>
+                                <div class="flex gap-3"><div class="logic-bullet"></div><p><b>근거:</b> 특정 시간대 클릭률(CTR) 집중 현상 발견</p></div>
+                                <div class="flex gap-3"><div class="logic-bullet"></div><p><b>효과:</b> 핵심 시간대 노출 점유율 15% 추가 확보 가능</p></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div id="ai-empty-view" class="py-32 text-center border-2 border-dashed border-stone-200 rounded-[3rem]">
-                    <p class="text-stone-300 font-black text-2xl italic uppercase">파일을 기다리고 있어요!</p>
+                    <p class="text-stone-300 font-black text-2xl italic uppercase">데이터를 분석할 준비가 되었습니다!</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 탭 전환 및 모든 기존 함수 유지
+        let myChart = null;
+
         function switchTab(tab) {
             document.getElementById('view-dashboard').classList.toggle('hidden', tab !== 'dashboard');
             document.getElementById('view-ai-strategy').classList.toggle('hidden', tab !== 'ai-strategy');
@@ -142,32 +134,97 @@
             const r1 = parseFloat(document.getElementById('calc-rev-1').value) || 0;
             const resRoas = document.getElementById('res-roas');
             if(s1 > 0) {
-                resRoas.innerText = Math.round((r1 / s1) * 100) + '%';
+                const val = Math.round((r1 / s1) * 100);
+                resRoas.innerText = val + '%';
                 resRoas.style.color = '#ff85a1';
                 resRoas.style.opacity = '1';
             }
+
+            const s2 = parseFloat(document.getElementById('calc-spend-2').value) || 0;
+            const tRoas = parseFloat(document.getElementById('calc-target-roas').value) || 0;
+            if(s2 > 0) {
+                document.getElementById('res-target-rev').innerText = Math.round(s2 * (tRoas/100)).toLocaleString() + '원';
+            }
         }
 
-        function monitor() {
+        function monitor(type) {
             const b = document.getElementById('search-brand').value;
             if(!b) return alert('키워드 입력!');
-            window.open(`https://search.naver.com/search.naver?query=${encodeURIComponent(b)}`);
+            const url = type === 'naver' ? `https://search.naver.com/search.naver?query=${b}` : `https://blackkiwi.net/service/check-keyword?keyword=${b}`;
+            window.open(url);
         }
 
+        // --- 핵심: 데이터 파싱 및 그래프 생성 로직 ---
         function handleFiles(files) {
-            // 기존 그래프 처리 로직 그대로 유지
-            alert('파일이 업로드되었습니다. 그래프를 생성합니다.');
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(sheet, {header: 1});
+                
+                if(rows.length < 2) return alert('데이터가 부족합니다.');
+
+                const head = rows[0];
+                let idx = { label: 0, rev: -1, cost: -1, roas: -1 };
+
+                head.forEach((h, i) => {
+                    const t = String(h).replace(/\s/g, '');
+                    if(t.includes('매출') || t.includes('수익')) idx.rev = i;
+                    else if(t.includes('비용') || t.includes('광고비') || t.includes('지출')) idx.cost = i;
+                    else if(t.includes('로아스') || t.includes('ROAS')) idx.roas = i;
+                    else if(t.includes('날짜') || t.includes('시간')) idx.label = i;
+                });
+
+                const clean = (v) => parseFloat(String(v || 0).replace(/[^0-9.-]+/g, ""));
+                const d = { labels: [], rev: [], cost: [], roas: [] };
+
+                for(let i=1; i<rows.length; i++) {
+                    if(!rows[i][idx.label] && !rows[i][idx.rev]) continue;
+                    d.labels.push(rows[i][idx.label] || `${i}행`);
+                    d.rev.push(clean(rows[i][idx.rev]));
+                    d.cost.push(clean(rows[i][idx.cost]));
+                    d.roas.push(clean(rows[i][idx.roas]));
+                }
+                updateChart(d);
+            };
+            reader.readAsArrayBuffer(files[0]);
+        }
+
+        function updateChart(d) {
             const ctx = document.getElementById('mkt-chart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: { labels: ['A', 'B', 'C'], datasets: [{ label: 'Performance', data: [10, 20, 30], backgroundColor: '#ff85a1' }] }
+            if(myChart) myChart.destroy();
+            
+            myChart = new Chart(ctx, {
+                data: {
+                    labels: d.labels,
+                    datasets: [
+                        { type: 'line', label: 'ROAS (%)', data: d.roas, borderColor: '#ff85a1', backgroundColor: '#ff85a1', borderWidth: 4, yAxisID: 'y2', zIndex: 10, tension: 0.3 },
+                        { type: 'bar', label: '매출액', data: d.rev, backgroundColor: '#ff85a133', borderRadius: 10, yAxisID: 'y1' },
+                        { type: 'line', label: '광고비', data: d.cost, borderColor: '#634832', borderDash: [5,5], borderWidth: 1, fill: false, yAxisID: 'y1' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y1: { type: 'linear', position: 'left', grid: { color: '#f0f0f0' } },
+                        y2: { type: 'linear', position: 'right', grid: { display: false }, ticks: { color: '#ff85a1', font: { weight: 'bold' } } }
+                    },
+                    plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, font: { weight: 'bold' } } } }
+                }
             });
         }
 
-        function handleAiAnalysis(files) {
+        function handleAiAnalysis() {
             document.getElementById('ai-empty-view').classList.add('hidden');
             document.getElementById('ai-result-view').classList.remove('hidden');
-            alert('데이터 기반 전략 브리핑을 생성했습니다.');
+        }
+
+        function saveImage() {
+            const link = document.createElement('a');
+            link.download = 'Performance_Report.png';
+            link.href = document.getElementById('mkt-chart').toDataURL('image/png');
+            link.click();
         }
     </script>
 </body>
